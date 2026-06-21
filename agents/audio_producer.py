@@ -71,19 +71,24 @@ class AudioProducer:
         with open(list_file, "w") as f:
             for fp in file_paths:
                 f.write(f"file '{Path(fp).absolute()}'\n")
+        # Re-encode to consistent format so loudnorm doesn't SIGABRT on
+        # mixed-rate streams (OpenAI TTS is 24kHz; silence files are 44100Hz).
         subprocess.run([
             "ffmpeg", "-y", "-f", "concat", "-safe", "0",
-            "-i", str(list_file), "-c", "copy", str(output_path)
+            "-i", str(list_file), "-ar", "44100", "-ac", "1", "-b:a", "128k",
+            str(output_path)
         ], check=True, capture_output=True)
         list_file.unlink()
 
     def _normalize(self, input_path, output_path):
-        subprocess.run([
+        result = subprocess.run([
             "ffmpeg", "-y", "-i", str(input_path),
             "-af", "loudnorm=I=-16:TP=-1.5:LRA=11",
             "-ar", "44100", "-b:a", "192k",
             str(output_path)
         ], check=True, capture_output=True)
+        if result.stderr:
+            logger.debug("ffmpeg loudnorm stderr: %s", result.stderr.decode(errors="replace")[-500:])
 
     def produce(self, script, episode_dir):
         episode_dir = Path(episode_dir)
