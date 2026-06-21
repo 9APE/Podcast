@@ -33,9 +33,8 @@ class Researcher:
                 results = self.exa.search_and_contents(
                     query,
                     num_results=4,
-                    use_autoprompt=True,
                     start_published_date=seven_days_ago,
-                    text={"max_characters": 3000}
+                    text=True
                 )
                 for r in results.results:
                     if r.url not in seen_urls and r.text and len(r.text) > 200:

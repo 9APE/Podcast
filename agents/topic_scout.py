@@ -65,16 +65,15 @@ class TopicScout:
                 results = self.exa.search_and_contents(
                     query,
                     num_results=5,
-                    use_autoprompt=True,
                     start_published_date=two_days_ago,
-                    text={"max_characters": 500}
+                    text=True
                 )
                 for r in results.results:
                     if r.title and not self._is_seen(r.title):
                         candidates.append({
                             "title": r.title,
                             "url": r.url,
-                            "summary": r.text[:400] if r.text else "",
+                            "summary": (r.text or "")[:400],
                             "published_date": r.published_date
                         })
             except Exception as e:
