@@ -179,10 +179,15 @@ class Publisher:
         for prefix, uri in ns.items():
             ET.register_namespace(prefix, uri)
 
+        ARTWORK_URL = f"{GITHUB_PAGES_URL}/rss/artwork.jpg"
+        OWNER_EMAIL = "ariimoanapons@gmail.com"
+
         if RSS_PATH.exists():
             tree = ET.parse(RSS_PATH)
             root = tree.getroot()
             channel_el = root.find("channel")
+            # Count existing episodes for numbering
+            episode_number = len(channel_el.findall("item")) + 1
         else:
             root = ET.Element("rss", {
                 "version": "2.0",
@@ -190,24 +195,38 @@ class Publisher:
                 "xmlns:content": ns["content"]
             })
             channel_el = ET.SubElement(root, "channel")
-            ET.SubElement(channel_el, "title").text = self.channel.get("name", "Daily Briefing")
+            channel_name = self.channel.get("name", "The News Pod")
+            ET.SubElement(channel_el, "title").text = channel_name
             ET.SubElement(channel_el, "link").text = GITHUB_PAGES_URL
-            ET.SubElement(channel_el, "description").text = self.channel.get("description", "")
+            ET.SubElement(channel_el, "description").text = self.channel.get(
+                "description", "Your daily AI-powered news briefing."
+            )
             ET.SubElement(channel_el, "language").text = "en-us"
-            ET.SubElement(channel_el, "{%s}author" % ns["itunes"]).text = self.channel.get("name", "Daily Briefing")
+            ET.SubElement(channel_el, "{%s}author" % ns["itunes"]).text = channel_name
+            ET.SubElement(channel_el, "{%s}explicit" % ns["itunes"]).text = "false"
+            ET.SubElement(channel_el, "{%s}type" % ns["itunes"]).text = "episodic"
             ET.SubElement(channel_el, "{%s}category" % ns["itunes"], {"text": "News"})
+            ET.SubElement(channel_el, "{%s}image" % ns["itunes"], {"href": ARTWORK_URL})
+            owner_el = ET.SubElement(channel_el, "{%s}owner" % ns["itunes"])
+            ET.SubElement(owner_el, "{%s}name" % ns["itunes"]).text = channel_name
+            ET.SubElement(owner_el, "{%s}email" % ns["itunes"]).text = OWNER_EMAIL
+            episode_number = 1
 
         audio_size = Path(audio_path).stat().st_size if Path(audio_path).exists() else 0
         pub_date = datetime.now(timezone.utc).strftime("%a, %d %b %Y %H:%M:%S +0000")
 
         item = ET.SubElement(channel_el, "item")
         ET.SubElement(item, "title").text = topic["title"]
+        ET.SubElement(item, "{%s}title" % ns["itunes"]).text = topic["title"]
         ET.SubElement(item, "description").text = (
             f"Today's briefing: {topic['title']}. "
             f"Watch on YouTube: {youtube_url}"
         )
         ET.SubElement(item, "pubDate").text = pub_date
         ET.SubElement(item, "guid").text = episode_id
+        ET.SubElement(item, "{%s}episodeType" % ns["itunes"]).text = "full"
+        ET.SubElement(item, "{%s}episode" % ns["itunes"]).text = str(episode_number)
+        ET.SubElement(item, "{%s}explicit" % ns["itunes"]).text = "false"
         if audio_url:
             ET.SubElement(item, "enclosure", {
                 "url": audio_url,
@@ -215,13 +234,13 @@ class Publisher:
                 "length": str(audio_size)
             })
         ET.SubElement(item, "{%s}duration" % ns["itunes"]).text = str(
-            self.channel.get("episode_length_min", 12) * 60
+            self.channel.get("episode_length_min", 7) * 60
         )
 
         tree = ET.ElementTree(root)
         ET.indent(tree, space="  ")
         tree.write(str(RSS_PATH), encoding="unicode", xml_declaration=True)
-        logger.info("RSS feed updated")
+        logger.info(f"RSS feed updated — episode {episode_number}")
 
     def publish(self, audio_path, topic, episode_id, episode_dir):
         import json as _json
