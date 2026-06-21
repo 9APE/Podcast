@@ -1,0 +1,6 @@
+episodes/
+*.pyc
+__pycache__/
+.env
+client_secret*.json
+auth.py

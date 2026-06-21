@@ -1,0 +1,237 @@
+import os
+import json
+import logging
+import subprocess
+import xml.etree.ElementTree as ET
+from datetime import datetime, timezone
+from pathlib import Path
+
+import requests
+from PIL import Image, ImageDraw, ImageFont
+from googleapiclient.discovery import build
+from googleapiclient.http import MediaFileUpload
+from google.oauth2.credentials import Credentials
+
+logger = logging.getLogger(__name__)
+
+RSS_PATH = Path("rss/feed.xml")
+GITHUB_PAGES_URL = "https://9ape.github.io/Podcast"
+
+
+class Publisher:
+    def __init__(self, channel):
+        self.channel = channel
+        self._setup_youtube()
+
+    def _setup_youtube(self):
+        secret = json.loads(os.environ["YOUTUBE_CLIENT_SECRET"])
+        creds = Credentials(
+            token=None,
+            refresh_token=os.environ["YOUTUBE_REFRESH_TOKEN"],
+            token_uri="https://oauth2.googleapis.com/token",
+            client_id=secret["installed"]["client_id"],
+            client_secret=secret["installed"]["client_secret"],
+            scopes=["https://www.googleapis.com/auth/youtube.upload"]
+        )
+        self.youtube = build("youtube", "v3", credentials=creds)
+
+    def _create_thumbnail(self, title, episode_dir):
+        img = Image.new("RGB", (1280, 720), color=(12, 12, 22))
+        draw = ImageDraw.Draw(img)
+
+        try:
+            font_large = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 62)
+            font_small = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 36)
+        except OSError:
+            font_large = ImageFont.load_default()
+            font_small = font_large
+
+        # Accent bar
+        draw.rectangle([60, 195, 1220, 202], fill=(58, 110, 240))
+
+        # Channel name
+        draw.text((64, 118), self.channel.get("name", "Daily Briefing"), font=font_small, fill=(140, 150, 210))
+
+        # Title wrapped
+        words = title.split()
+        lines, line = [], []
+        for word in words:
+            test = " ".join(line + [word])
+            bbox = draw.textbbox((0, 0), test, font=font_large)
+            if bbox[2] - bbox[0] > 1150 and line:
+                lines.append(" ".join(line))
+                line = [word]
+            else:
+                line.append(word)
+        if line:
+            lines.append(" ".join(line))
+
+        y = 230
+        for text_line in lines[:3]:
+            draw.text((64, y), text_line, font=font_large, fill=(235, 238, 255))
+            y += 78
+
+        draw.text((64, 618), datetime.now().strftime("%B %d, %Y"), font=font_small, fill=(110, 120, 160))
+
+        path = Path(episode_dir) / "thumbnail.jpg"
+        img.save(path, "JPEG", quality=95)
+        return path
+
+    def _create_video(self, audio_path, thumbnail_path, episode_dir):
+        video_path = Path(episode_dir) / "episode.mp4"
+        subprocess.run([
+            "ffmpeg", "-y",
+            "-loop", "1", "-i", str(thumbnail_path),
+            "-i", str(audio_path),
+            "-c:v", "libx264", "-tune", "stillimage",
+            "-c:a", "aac", "-b:a", "192k",
+            "-pix_fmt", "yuv420p",
+            "-shortest", str(video_path)
+        ], check=True, capture_output=True)
+        return video_path
+
+    def _upload_youtube(self, video_path, topic, episode_id):
+        date_str = datetime.now().strftime("%B %d, %Y")
+        title = f"{topic['title'][:90]} | {date_str}"
+        tags = self.channel.get("tags", ["news", "daily briefing"])
+        description = (
+            f"{self.channel.get('description', '')}\n\n"
+            f"Today: {topic['title']}\n\n"
+            f"All facts in this episode are sourced and cited throughout.\n"
+            f"This episode was produced with AI assistance.\n\n"
+            f"#{' #'.join(tags)}"
+        )
+        body = {
+            "snippet": {
+                "title": title,
+                "description": description,
+                "tags": tags,
+                "categoryId": self.channel.get("youtube_category_id", "25"),
+                "defaultLanguage": "en"
+            },
+            "status": {
+                "privacyStatus": "public",
+                "madeForKids": False,
+                "selfDeclaredMadeForKids": False
+            }
+        }
+        media = MediaFileUpload(str(video_path), mimetype="video/mp4", resumable=True)
+        request = self.youtube.videos().insert(part="snippet,status", body=body, media_body=media)
+        response = None
+        while response is None:
+            status, response = request.next_chunk()
+            if status:
+                logger.info(f"YouTube upload: {int(status.progress() * 100)}%")
+        video_id = response["id"]
+        logger.info(f"YouTube published: {video_id}")
+        return f"https://youtube.com/watch?v={video_id}"
+
+    def _upload_to_github_release(self, audio_path, episode_id):
+        token = os.environ.get("GITHUB_TOKEN")
+        if not token:
+            logger.warning("GITHUB_TOKEN not set, skipping release upload")
+            return None
+
+        repo = os.environ.get("GITHUB_REPOSITORY", "9APE/Podcast")
+        headers = {
+            "Authorization": f"token {token}",
+            "Accept": "application/vnd.github.v3+json"
+        }
+
+        r = requests.post(
+            f"https://api.github.com/repos/{repo}/releases",
+            json={"tag_name": episode_id, "name": episode_id, "draft": False, "prerelease": False},
+            headers=headers
+        )
+        r.raise_for_status()
+        upload_url = r.json()["upload_url"].replace("{?name,label}", "")
+
+        filename = f"{episode_id}.mp3"
+        with open(audio_path, "rb") as f:
+            r = requests.post(
+                f"{upload_url}?name={filename}",
+                headers={**headers, "Content-Type": "audio/mpeg"},
+                data=f
+            )
+        r.raise_for_status()
+        url = r.json()["browser_download_url"]
+        logger.info(f"Audio uploaded: {url}")
+        return url
+
+    def _update_rss(self, episode_id, topic, audio_url, youtube_url, audio_path):
+        RSS_PATH.parent.mkdir(exist_ok=True)
+
+        ns = {
+            "itunes": "http://www.itunes.com/dtds/podcast-1.0.dtd",
+            "content": "http://purl.org/rss/1.0/modules/content/"
+        }
+        for prefix, uri in ns.items():
+            ET.register_namespace(prefix, uri)
+
+        if RSS_PATH.exists():
+            tree = ET.parse(RSS_PATH)
+            root = tree.getroot()
+            channel_el = root.find("channel")
+        else:
+            root = ET.Element("rss", {
+                "version": "2.0",
+                "xmlns:itunes": ns["itunes"],
+                "xmlns:content": ns["content"]
+            })
+            channel_el = ET.SubElement(root, "channel")
+            ET.SubElement(channel_el, "title").text = self.channel.get("name", "Daily Briefing")
+            ET.SubElement(channel_el, "link").text = GITHUB_PAGES_URL
+            ET.SubElement(channel_el, "description").text = self.channel.get("description", "")
+            ET.SubElement(channel_el, "language").text = "en-us"
+            ET.SubElement(channel_el, "{%s}author" % ns["itunes"]).text = self.channel.get("name", "Daily Briefing")
+            ET.SubElement(channel_el, "{%s}category" % ns["itunes"], {"text": "News"})
+
+        audio_size = Path(audio_path).stat().st_size if Path(audio_path).exists() else 0
+        pub_date = datetime.now(timezone.utc).strftime("%a, %d %b %Y %H:%M:%S +0000")
+
+        item = ET.SubElement(channel_el, "item")
+        ET.SubElement(item, "title").text = topic["title"]
+        ET.SubElement(item, "description").text = (
+            f"Today's briefing: {topic['title']}. "
+            f"Watch on YouTube: {youtube_url}"
+        )
+        ET.SubElement(item, "pubDate").text = pub_date
+        ET.SubElement(item, "guid").text = episode_id
+        if audio_url:
+            ET.SubElement(item, "enclosure", {
+                "url": audio_url,
+                "type": "audio/mpeg",
+                "length": str(audio_size)
+            })
+        ET.SubElement(item, "{%s}duration" % ns["itunes"]).text = str(
+            self.channel.get("episode_length_min", 12) * 60
+        )
+
+        tree = ET.ElementTree(root)
+        ET.indent(tree, space="  ")
+        tree.write(str(RSS_PATH), encoding="unicode", xml_declaration=True)
+        logger.info("RSS feed updated")
+
+    def publish(self, audio_path, topic, episode_id, episode_dir):
+        audio_path = Path(audio_path)
+
+        logger.info("Creating thumbnail")
+        thumbnail_path = self._create_thumbnail(topic["title"], episode_dir)
+
+        logger.info("Creating video")
+        video_path = self._create_video(audio_path, thumbnail_path, episode_dir)
+
+        logger.info("Uploading to YouTube")
+        youtube_url = self._upload_youtube(video_path, topic, episode_id)
+
+        logger.info("Uploading audio to GitHub Releases")
+        audio_url = self._upload_to_github_release(audio_path, episode_id)
+
+        logger.info("Updating RSS feed")
+        self._update_rss(episode_id, topic, audio_url, youtube_url, audio_path)
+
+        return {
+            "youtube_url": youtube_url,
+            "audio_url": audio_url,
+            "rss_url": f"{GITHUB_PAGES_URL}/rss/feed.xml"
+        }
