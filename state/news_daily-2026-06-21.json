@@ -1,0 +1,14 @@
+{
+  "episode_id": "news_daily-2026-06-21",
+  "stage": "audio_produced",
+  "topic": {
+    "title": "US-Iran peace deal talks underway in Switzerland | Euronews",
+    "url": "https://www.euronews.com/2026/06/21/us-and-iranian-delegations-arrive-in-switzerland-for-peace-deal-talks",
+    "summary": "US-Iran peace deal talks underway in Switzerland | Euronews\n\nSport\n\nSpain claim first win of the tournament with 4-0 win over Saudi Arabia\n\nCulture news\n\nJames Burrows, director of beloved sitcom \"Friends\", dies aged 85\n\nSwitzerland\n\nUS and Iran publicly trade threats as talks take place in Switzerland\n\nCulture news\n\nDrone show in Matosinhos breaks Guinness World Record\n\nSport\n\nSpain claim first w",
+    "published_date": "2026-06-21T07:19:09.000Z"
+  },
+  "research_path": "episodes/news_daily-2026-06-21/research.json",
+  "script_path": "episodes/news_daily-2026-06-21/script.txt",
+  "verified_script_path": "episodes/news_daily-2026-06-21/script_verified.txt",
+  "audio_path": "episodes/news_daily-2026-06-21/episode.mp3"
+}
