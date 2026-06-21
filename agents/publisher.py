@@ -90,17 +90,28 @@ class Publisher:
         ], check=True, capture_output=True)
         return video_path
 
-    def _upload_youtube(self, video_path, topic, episode_id):
+    def _build_description(self, topic, sources):
+        date_str = datetime.now().strftime("%B %d, %Y")
+        tags = self.channel.get("tags", ["news", "daily briefing"])
+
+        sources_lines = "\n".join([
+            f"[{i+1}] {s.get('title', 'Source')}\n     {s.get('url', '')}"
+            for i, s in enumerate(sources)
+        ])
+
+        return (
+            f"{self.channel.get('description', '')}\n\n"
+            f"Today ({date_str}): {topic['title']}\n\n"
+            f"SOURCES:\n{sources_lines}\n\n"
+            f"All facts are sourced and verified. Produced with AI assistance.\n\n"
+            f"#{' #'.join(tags)}"
+        )
+
+    def _upload_youtube(self, video_path, topic, episode_id, sources=None):
         date_str = datetime.now().strftime("%B %d, %Y")
         title = f"{topic['title'][:90]} | {date_str}"
         tags = self.channel.get("tags", ["news", "daily briefing"])
-        description = (
-            f"{self.channel.get('description', '')}\n\n"
-            f"Today: {topic['title']}\n\n"
-            f"All facts in this episode are sourced and cited throughout.\n"
-            f"This episode was produced with AI assistance.\n\n"
-            f"#{' #'.join(tags)}"
-        )
+        description = self._build_description(topic, sources or [])
         body = {
             "snippet": {
                 "title": title,
@@ -213,7 +224,18 @@ class Publisher:
         logger.info("RSS feed updated")
 
     def publish(self, audio_path, topic, episode_id, episode_dir):
+        import json as _json
         audio_path = Path(audio_path)
+
+        # Load sources from research bundle for description
+        sources = []
+        research_path = Path(episode_dir) / "research.json"
+        if research_path.exists():
+            try:
+                research = _json.loads(research_path.read_text())
+                sources = research.get("sources", [])
+            except Exception:
+                pass
 
         logger.info("Creating thumbnail")
         thumbnail_path = self._create_thumbnail(topic["title"], episode_dir)
@@ -222,7 +244,7 @@ class Publisher:
         video_path = self._create_video(audio_path, thumbnail_path, episode_dir)
 
         logger.info("Uploading to YouTube")
-        youtube_url = self._upload_youtube(video_path, topic, episode_id)
+        youtube_url = self._upload_youtube(video_path, topic, episode_id, sources)
 
         logger.info("Uploading audio to GitHub Releases")
         audio_url = self._upload_to_github_release(audio_path, episode_id)

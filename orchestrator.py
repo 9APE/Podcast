@@ -133,7 +133,7 @@ def run_channel(channel):
         if state["stage"] == "fact_checked":
             logger.info("Stage 5: Audio Production")
             script = Path(state["verified_script_path"]).read_text()
-            audio_path = AudioProducer().produce(script, episode_dir)
+            audio_path = AudioProducer(channel).produce(script, episode_dir)
             state.update({"audio_path": str(audio_path), "stage": "audio_produced"})
             save_state(state)
 

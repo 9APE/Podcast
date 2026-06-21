@@ -1,10 +1,14 @@
 channels:
   - id: news_daily
-    name: "The Daily Briefing"
+    name: "The News Pod"
     niche: "world news and current events"
-    description: "Your daily AI-powered news briefing — the most important stories, clearly explained."
-    voice: "onyx"
-    episode_length_min: 12
+    description: "The News Pod — the most important stories of the day, clearly explained."
+    host_male: "Alex"
+    host_female: "Sarah"
+    # ElevenLabs voice IDs — Adam (male) and Rachel (female)
+    voice_male_id: "pNInz6obpgDQGcFmaJgB"
+    voice_female_id: "21m00Tcm4TlvDq8ikWAM"
+    episode_length_min: 7
     youtube_category_id: "25"
     tags:
       - news
