@@ -41,8 +41,7 @@ def save_state(state):
 def validate_files(state):
     """
     GitHub Actions runners are ephemeral — episode files are not persisted.
-    Reset stage to the earliest point where files are missing so the
-    pipeline regenerates only what it needs to.
+    Reset stage to the earliest point where files are missing.
     """
     stage = state.get("stage", "start")
 
@@ -65,43 +64,35 @@ def validate_files(state):
             path = state.get(key, "")
             if not path or not Path(path).exists():
                 new_stage = resets[key]
-                logger.warning(f"Missing file '{key}' — resetting stage from '{stage}' to '{new_stage}'")
+                logger.warning(f"Missing '{key}' — resetting stage from '{stage}' to '{new_stage}'")
                 state["stage"] = new_stage
                 stage = new_stage
 
     return state
 
 
-def run_channel(channel):
-    channel_id = channel["id"]
-    date_str = datetime.now().strftime("%Y-%m-%d")
-    episode_id = f"{channel_id}-{date_str}"
+def run_episode(channel, episode_id, topic):
+    """Run the full pipeline for a single topic. Returns True on success."""
     episode_dir = EPISODES_DIR / episode_id
     episode_dir.mkdir(exist_ok=True)
 
     state = load_state(episode_id)
+
+    # If topic came in from outside (fresh discovery), inject it
+    if state["stage"] == "start" and topic:
+        state.update({"topic": topic, "stage": "topic_found"})
+        save_state(state)
+
     state = validate_files(state)
     logger.info(f"Episode {episode_id} — stage: {state['stage']}")
 
     try:
-        # Stage 1: Topic Discovery
-        if state["stage"] == "start":
-            logger.info("Stage 1: Topic Discovery")
-            topic = TopicScout(channel).find_topic()
-            if not topic:
-                logger.error("No suitable topic found — aborting")
-                return False
-            state.update({"topic": topic, "stage": "topic_found"})
-            save_state(state)
-
         # Stage 2: Research
         if state["stage"] == "topic_found":
             logger.info("Stage 2: Research")
             research = Researcher(channel).research(state["topic"])
             if not research or len(research.get("claims", [])) < 5:
                 logger.error("Insufficient research — aborting")
-                state["stage"] = "start"
-                save_state(state)
                 return False
             research_path = episode_dir / "research.json"
             research_path.write_text(json.dumps(research, indent=2))
@@ -162,6 +153,30 @@ def run_channel(channel):
         return False
 
 
+def run_channel(channel):
+    """Discover top N topics for this channel and produce one episode per topic."""
+    channel_id = channel["id"]
+    date_str = datetime.now().strftime("%Y-%m-%d")
+    max_topics = channel.get("max_topics", 5)
+
+    logger.info(f"Channel {channel_id}: discovering top {max_topics} topics")
+    topics = TopicScout(channel).find_topics(n=max_topics)
+
+    if not topics:
+        logger.error(f"Channel {channel_id}: no topics found — skipping")
+        return []
+
+    results = []
+    for i, topic in enumerate(topics, start=1):
+        episode_id = f"{channel_id}-{date_str}-t{i}"
+        logger.info(f"--- Episode {i}/{len(topics)}: {topic['title']}")
+        success = run_episode(channel, episode_id, topic)
+        results.append({"episode_id": episode_id, "topic": topic["title"], "success": success})
+        logger.info(f"Episode {episode_id}: {'OK' if success else 'FAILED'}")
+
+    return results
+
+
 def main():
     init_dirs()
 
@@ -174,10 +189,10 @@ def main():
         config = yaml.safe_load(f)
 
     for channel in config.get("channels", []):
-        logger.info(f"Starting channel: {channel['id']}")
-        success = run_channel(channel)
-        status = "OK" if success else "FAILED"
-        logger.info(f"Channel {channel['id']}: {status}")
+        logger.info(f"=== Starting channel: {channel['id']} ===")
+        results = run_channel(channel)
+        ok = sum(1 for r in results if r["success"])
+        logger.info(f"Channel {channel['id']}: {ok}/{len(results)} episodes published")
 
 
 if __name__ == "__main__":

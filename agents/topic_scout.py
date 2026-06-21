@@ -1,4 +1,5 @@
 import os
+import re
 import sqlite3
 import logging
 from datetime import datetime, timedelta
@@ -49,51 +50,50 @@ class TopicScout:
         conn.commit()
         conn.close()
 
-    def find_topic(self):
+    def _gather_candidates(self):
         today = datetime.now().strftime("%B %d, %Y")
         yesterday = (datetime.now() - timedelta(hours=24)).strftime("%Y-%m-%dT%H:%M:%S.000Z")
         two_days_ago = (datetime.now() - timedelta(days=2)).strftime("%Y-%m-%dT%H:%M:%S.000Z")
 
-        # Use channel-specific queries if defined, otherwise fall back to defaults
         base_queries = self.channel.get("search_queries") or [
             f"most important world news story today {today}",
             f"breaking news major event {today}",
             f"top global news story this week"
         ]
-        # Append today's date to each query to bias toward fresh results
         queries = [f"{q} {today}" if today not in q else q for q in base_queries]
 
         candidates = []
 
-        # First pass: last 24 hours only (freshest content)
+        # First pass: last 24 hours
         for query in queries:
             try:
                 results = self.exa.search_and_contents(
                     query,
-                    num_results=5,
+                    num_results=6,
                     start_published_date=yesterday,
                     text=True
                 )
                 for r in results.results:
                     if r.title and not self._is_seen(r.title):
-                        candidates.append({
-                            "title": r.title,
-                            "url": r.url,
-                            "summary": (r.text or "")[:400],
-                            "published_date": r.published_date,
-                            "age_hours": "< 24h"
-                        })
+                        if not any(c["title"] == r.title for c in candidates):
+                            candidates.append({
+                                "title": r.title,
+                                "url": r.url,
+                                "summary": (r.text or "")[:400],
+                                "published_date": r.published_date,
+                                "age_hours": "< 24h"
+                            })
             except Exception as e:
                 logger.warning(f"Exa search (24h) failed for '{query}': {e}")
 
-        # Fallback: expand to 48 hours if slim pickings
-        if len(candidates) < 5:
-            logger.info("Fewer than 5 fresh candidates — expanding to 48h window")
+        # Fallback: expand to 48 hours if not enough candidates
+        if len(candidates) < 10:
+            logger.info(f"Only {len(candidates)} fresh candidates — expanding to 48h window")
             for query in queries:
                 try:
                     results = self.exa.search_and_contents(
                         query,
-                        num_results=5,
+                        num_results=6,
                         start_published_date=two_days_ago,
                         text=True
                     )
@@ -110,37 +110,72 @@ class TopicScout:
                 except Exception as e:
                     logger.warning(f"Exa search (48h) failed for '{query}': {e}")
 
+        return candidates
+
+    def find_topics(self, n=5):
+        """Return the top N most trending, unseen topics for this channel."""
+        today = datetime.now().strftime("%B %d, %Y")
+        candidates = self._gather_candidates()
+
         if not candidates:
             logger.error("No candidate topics found")
-            return None
+            return []
+
+        pool = candidates[:15]  # cap at 15 to keep the prompt manageable
+        n = min(n, len(pool))
 
         candidates_text = "\n".join([
             f"{i+1}. [{c.get('age_hours', '?')}] {c['title']} — {c['summary'][:200]}"
-            for i, c in enumerate(candidates[:10])
+            for i, c in enumerate(pool)
         ])
 
         response = self.claude.messages.create(
             model="claude-haiku-4-5-20251001",
-            max_tokens=10,
+            max_tokens=50,
             messages=[{
                 "role": "user",
                 "content": (
-                    f"Pick the single most trending and relevant topic for \"{self.channel.get('name', 'a daily podcast')}\" "
+                    f"Rank the top {n} most trending and impactful stories for "
+                    f"\"{self.channel.get('name', 'a daily podcast')}\" "
                     f"focused on {self.channel.get('niche', 'world news')}.\n\n"
-                    f"Today is {today}. Strongly prefer topics published in the last 24 hours (marked < 24h). "
-                    f"Pick the story that is most talked-about and impactful right now.\n\n"
+                    f"Today is {today}. Strongly prefer stories published in the last 24 hours (< 24h). "
+                    f"Pick stories that are distinct — no two stories about the same event.\n\n"
                     f"Candidates:\n{candidates_text}\n\n"
-                    f"Reply with just the number (1-{min(10, len(candidates))}). Nothing else."
+                    f"Reply with exactly {n} comma-separated numbers in order of importance. "
+                    f"Example format: 3,1,5,2,4 — numbers only, nothing else."
                 )
             }]
         )
 
+        # Parse "3,1,5,2,4" → ordered list of candidates
+        raw = response.content[0].text.strip()
+        chosen = []
         try:
-            choice_idx = int(response.content[0].text.strip()) - 1
-            chosen = candidates[max(0, min(choice_idx, len(candidates) - 1))]
-        except (ValueError, IndexError):
-            chosen = candidates[0]
+            indices = [int(x.strip()) - 1 for x in re.findall(r'\d+', raw)]
+            seen_idx = set()
+            for idx in indices:
+                if 0 <= idx < len(pool) and idx not in seen_idx:
+                    chosen.append(pool[idx])
+                    seen_idx.add(idx)
+        except Exception:
+            logger.warning(f"Could not parse topic ranking '{raw}' — falling back to first {n}")
+            chosen = pool[:n]
 
-        self._mark_seen(chosen["title"])
-        logger.info(f"Topic selected: {chosen['title']}")
+        # Ensure we have exactly n (pad from pool if parsing gave fewer)
+        if len(chosen) < n:
+            for c in pool:
+                if c not in chosen:
+                    chosen.append(c)
+                if len(chosen) == n:
+                    break
+
+        for topic in chosen:
+            self._mark_seen(topic["title"])
+            logger.info(f"Topic selected: {topic['title']}")
+
         return chosen
+
+    def find_topic(self):
+        """Backward-compatible single-topic wrapper."""
+        topics = self.find_topics(n=1)
+        return topics[0] if topics else None

@@ -8,6 +8,7 @@ channels:
     voice_male: "onyx"
     voice_female: "nova"
     episode_length_min: 7
+    max_topics: 5
     youtube_category_id: "25"
     search_queries:
       - "biggest world news story today geopolitics conflict politics"
@@ -29,6 +30,7 @@ channels:
     voice_male: "onyx"
     voice_female: "nova"
     episode_length_min: 7
+    max_topics: 5
     youtube_category_id: "28"
     search_queries:
       - "biggest AI artificial intelligence news today"
