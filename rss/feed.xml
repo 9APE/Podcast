@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='utf-8'?>
+<rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>The Daily Briefing</title>
+    <link>https://9ape.github.io/Podcast</link>
+    <description>Your daily AI-powered news briefing — the most important stories, clearly explained.</description>
+    <language>en-us</language>
+    <itunes:author>The Daily Briefing</itunes:author>
+    <itunes:category text="News" />
+    <item>
+      <title>US-Iran peace deal talks underway in Switzerland | Euronews</title>
+      <description>Today's briefing: US-Iran peace deal talks underway in Switzerland | Euronews. Watch on YouTube: https://youtube.com/watch?v=g0wjFgizK28</description>
+      <pubDate>Sun, 21 Jun 2026 21:33:50 +0000</pubDate>
+      <guid>news_daily-2026-06-21</guid>
+      <enclosure url="https://github.com/9APE/Podcast/releases/download/news_daily-2026-06-21/news_daily-2026-06-21.mp3" type="audio/mpeg" length="15143123" />
+      <itunes:duration>720</itunes:duration>
+    </item>
+  </channel>
+</rss>

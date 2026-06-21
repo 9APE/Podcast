@@ -1,6 +1,6 @@
 {
   "episode_id": "news_daily-2026-06-21",
-  "stage": "audio_produced",
+  "stage": "published",
   "topic": {
     "title": "US-Iran peace deal talks underway in Switzerland | Euronews",
     "url": "https://www.euronews.com/2026/06/21/us-and-iranian-delegations-arrive-in-switzerland-for-peace-deal-talks",
@@ -10,5 +10,7 @@
   "research_path": "episodes/news_daily-2026-06-21/research.json",
   "script_path": "episodes/news_daily-2026-06-21/script.txt",
   "verified_script_path": "episodes/news_daily-2026-06-21/script_verified.txt",
-  "audio_path": "episodes/news_daily-2026-06-21/episode.mp3"
+  "audio_path": "episodes/news_daily-2026-06-21/episode.mp3",
+  "youtube_url": "https://youtube.com/watch?v=g0wjFgizK28",
+  "rss_url": "https://9ape.github.io/Podcast/rss/feed.xml"
 }
