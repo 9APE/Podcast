@@ -38,6 +38,40 @@ def save_state(state):
     path.write_text(json.dumps(state, indent=2))
 
 
+def validate_files(state):
+    """
+    GitHub Actions runners are ephemeral — episode files are not persisted.
+    Reset stage to the earliest point where files are missing so the
+    pipeline regenerates only what it needs to.
+    """
+    stage = state.get("stage", "start")
+
+    file_checks = [
+        (["researched", "scripted", "fact_checked", "audio_produced", "published"], "research_path"),
+        (["scripted", "fact_checked", "audio_produced", "published"], "script_path"),
+        (["fact_checked", "audio_produced", "published"], "verified_script_path"),
+        (["audio_produced", "published"], "audio_path"),
+    ]
+
+    resets = {
+        "research_path": "topic_found",
+        "script_path": "researched",
+        "verified_script_path": "scripted",
+        "audio_path": "fact_checked",
+    }
+
+    for stages, key in file_checks:
+        if stage in stages:
+            path = state.get(key, "")
+            if not path or not Path(path).exists():
+                new_stage = resets[key]
+                logger.warning(f"Missing file '{key}' — resetting stage from '{stage}' to '{new_stage}'")
+                state["stage"] = new_stage
+                stage = new_stage
+
+    return state
+
+
 def run_channel(channel):
     channel_id = channel["id"]
     date_str = datetime.now().strftime("%Y-%m-%d")
@@ -46,6 +80,7 @@ def run_channel(channel):
     episode_dir.mkdir(exist_ok=True)
 
     state = load_state(episode_id)
+    state = validate_files(state)
     logger.info(f"Episode {episode_id} — stage: {state['stage']}")
 
     try:
