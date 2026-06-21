@@ -4,27 +4,21 @@ import logging
 import subprocess
 from pathlib import Path
 
-from elevenlabs import ElevenLabs
+from openai import OpenAI
 
 logger = logging.getLogger(__name__)
 
-# Default ElevenLabs pre-made voice IDs
-# Adam = deep male American, Rachel = calm female American
-DEFAULT_MALE_VOICE = "pNInz6obpgDQGcFmaJgB"
-DEFAULT_FEMALE_VOICE = "21m00Tcm4TlvDq8ikWAM"
+# OpenAI voice assignments per host
+VOICE_MAP = {
+    "ALEX": "onyx",    # deep, authoritative male
+    "SARAH": "nova",   # warm, natural female
+}
 
 
 class AudioProducer:
     def __init__(self, channel=None):
-        self.client = ElevenLabs(api_key=os.environ["ELEVENLABS_API_KEY"])
-        self.male_voice_id = (
-            (channel or {}).get("voice_male_id") or
-            os.environ.get("ELEVENLABS_MALE_VOICE", DEFAULT_MALE_VOICE)
-        )
-        self.female_voice_id = (
-            (channel or {}).get("voice_female_id") or
-            os.environ.get("ELEVENLABS_FEMALE_VOICE", DEFAULT_FEMALE_VOICE)
-        )
+        self.openai = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
+        self.channel = channel or {}
 
     def _parse_dialogue(self, script):
         """Parse [ALEX]: / [SARAH]: tagged lines into (speaker, text) tuples."""
@@ -38,43 +32,39 @@ class AudioProducer:
                 lines.append((speaker, text))
         return lines
 
-    def _chunk_dialogue(self, lines, max_chars=1800):
-        """Batch lines into chunks under max_chars (ElevenLabs per-request limit)."""
-        chunks, current, current_len = [], [], 0
-        for speaker, text in lines:
-            length = len(text)
-            if current and current_len + length > max_chars:
-                chunks.append(current)
-                current, current_len = [], 0
-            current.append((speaker, text))
-            current_len += length
+    def _split_into_chunks(self, text, max_chars=4000):
+        """Split long text into TTS-safe chunks at sentence boundaries."""
+        sentences = re.split(r'(?<=[.!?])\s+', text)
+        chunks, current = [], ""
+        for sentence in sentences:
+            if len(current) + len(sentence) + 1 <= max_chars:
+                current = (current + " " + sentence).strip()
+            else:
+                if current:
+                    chunks.append(current)
+                current = sentence
         if current:
             chunks.append(current)
-        return chunks
+        return chunks if chunks else [text[:max_chars]]
 
-    def _generate_chunk(self, lines, output_path):
-        """Call ElevenLabs Text to Dialogue API for one chunk."""
-        inputs = [
-            {
-                "voice_id": self.male_voice_id if speaker == "ALEX" else self.female_voice_id,
-                "text": text
-            }
-            for speaker, text in lines
-        ]
-
-        audio = self.client.text_to_dialogue.convert(
-            inputs=inputs,
-            model_id="eleven_v3"
+    def _tts(self, text, voice, output_path):
+        """Generate TTS audio for a single chunk."""
+        response = self.openai.audio.speech.create(
+            model="tts-1-hd",
+            voice=voice,
+            input=text,
+            response_format="mp3"
         )
+        response.stream_to_file(str(output_path))
 
-        # Handle both bytes and streaming generator responses
-        if isinstance(audio, bytes):
-            audio_bytes = audio
-        else:
-            audio_bytes = b"".join(audio)
-
-        with open(output_path, "wb") as f:
-            f.write(audio_bytes)
+    def _create_silence(self, duration_ms, output_path):
+        subprocess.run([
+            "ffmpeg", "-y", "-f", "lavfi",
+            "-i", "anullsrc=r=44100:cl=mono",
+            "-t", str(duration_ms / 1000),
+            "-q:a", "9", "-acodec", "libmp3lame",
+            str(output_path)
+        ], check=True, capture_output=True)
 
     def _concat_files(self, file_paths, output_path):
         list_file = Path(output_path).parent / "concat_list.txt"
@@ -105,26 +95,33 @@ class AudioProducer:
             raise ValueError("No dialogue lines found. Script must use [ALEX]: and [SARAH]: tags.")
 
         logger.info(f"Parsed {len(lines)} dialogue lines")
-        chunks = self._chunk_dialogue(lines)
-        logger.info(f"Generating {len(chunks)} ElevenLabs chunks")
+
+        silence_path = chunks_dir / "silence.mp3"
+        self._create_silence(400, silence_path)
 
         audio_files = []
-        for i, chunk in enumerate(chunks):
-            chunk_path = chunks_dir / f"chunk_{i:03d}.mp3"
-            logger.info(f"ElevenLabs chunk {i + 1}/{len(chunks)} ({sum(len(t) for _, t in chunk)} chars)")
-            self._generate_chunk(chunk, chunk_path)
-            audio_files.append(chunk_path)
+        file_idx = 0
+
+        for speaker, text in lines:
+            voice = VOICE_MAP.get(speaker, "onyx")
+            text_chunks = self._split_into_chunks(text)
+
+            for chunk in text_chunks:
+                chunk_path = chunks_dir / f"line_{file_idx:04d}_{speaker.lower()}.mp3"
+                logger.info(f"TTS [{speaker}] ({len(chunk)} chars) voice={voice}")
+                self._tts(chunk, voice, chunk_path)
+                audio_files.append(chunk_path)
+                file_idx += 1
+
+            # Short pause between speaker turns
+            audio_files.append(silence_path)
 
         raw_path = episode_dir / "raw.mp3"
-        if len(audio_files) == 1:
-            audio_files[0].rename(raw_path)
-        else:
-            self._concat_files(audio_files, raw_path)
+        self._concat_files(audio_files, raw_path)
 
         final_path = episode_dir / "episode.mp3"
         self._normalize(raw_path, final_path)
-        if raw_path.exists():
-            raw_path.unlink()
+        raw_path.unlink()
 
         logger.info(f"Audio ready: {final_path}")
         return final_path
