@@ -51,21 +51,27 @@ class TopicScout:
 
     def find_topic(self):
         today = datetime.now().strftime("%B %d, %Y")
+        yesterday = (datetime.now() - timedelta(hours=24)).strftime("%Y-%m-%dT%H:%M:%S.000Z")
         two_days_ago = (datetime.now() - timedelta(days=2)).strftime("%Y-%m-%dT%H:%M:%S.000Z")
 
-        queries = [
+        # Use channel-specific queries if defined, otherwise fall back to defaults
+        base_queries = self.channel.get("search_queries") or [
             f"most important world news story today {today}",
             f"breaking news major event {today}",
             f"top global news story this week"
         ]
+        # Append today's date to each query to bias toward fresh results
+        queries = [f"{q} {today}" if today not in q else q for q in base_queries]
 
         candidates = []
+
+        # First pass: last 24 hours only (freshest content)
         for query in queries:
             try:
                 results = self.exa.search_and_contents(
                     query,
                     num_results=5,
-                    start_published_date=two_days_ago,
+                    start_published_date=yesterday,
                     text=True
                 )
                 for r in results.results:
@@ -74,17 +80,42 @@ class TopicScout:
                             "title": r.title,
                             "url": r.url,
                             "summary": (r.text or "")[:400],
-                            "published_date": r.published_date
+                            "published_date": r.published_date,
+                            "age_hours": "< 24h"
                         })
             except Exception as e:
-                logger.warning(f"Exa search failed for '{query}': {e}")
+                logger.warning(f"Exa search (24h) failed for '{query}': {e}")
+
+        # Fallback: expand to 48 hours if slim pickings
+        if len(candidates) < 5:
+            logger.info("Fewer than 5 fresh candidates — expanding to 48h window")
+            for query in queries:
+                try:
+                    results = self.exa.search_and_contents(
+                        query,
+                        num_results=5,
+                        start_published_date=two_days_ago,
+                        text=True
+                    )
+                    for r in results.results:
+                        if r.title and not self._is_seen(r.title):
+                            if not any(c["title"] == r.title for c in candidates):
+                                candidates.append({
+                                    "title": r.title,
+                                    "url": r.url,
+                                    "summary": (r.text or "")[:400],
+                                    "published_date": r.published_date,
+                                    "age_hours": "24-48h"
+                                })
+                except Exception as e:
+                    logger.warning(f"Exa search (48h) failed for '{query}': {e}")
 
         if not candidates:
             logger.error("No candidate topics found")
             return None
 
         candidates_text = "\n".join([
-            f"{i+1}. {c['title']} — {c['summary'][:200]}"
+            f"{i+1}. [{c.get('age_hours', '?')}] {c['title']} — {c['summary'][:200]}"
             for i, c in enumerate(candidates[:10])
         ])
 
@@ -94,7 +125,10 @@ class TopicScout:
             messages=[{
                 "role": "user",
                 "content": (
-                    f"Pick the single best topic for a daily news briefing podcast targeting a general audience.\n\n"
+                    f"Pick the single most trending and relevant topic for \"{self.channel.get('name', 'a daily podcast')}\" "
+                    f"focused on {self.channel.get('niche', 'world news')}.\n\n"
+                    f"Today is {today}. Strongly prefer topics published in the last 24 hours (marked < 24h). "
+                    f"Pick the story that is most talked-about and impactful right now.\n\n"
                     f"Candidates:\n{candidates_text}\n\n"
                     f"Reply with just the number (1-{min(10, len(candidates))}). Nothing else."
                 )

@@ -5,14 +5,38 @@ channels:
     description: "The News Pod — the most important stories of the day, clearly explained."
     host_male: "Alex"
     host_female: "Sarah"
-    # ElevenLabs voice IDs — Adam (male) and Rachel (female)
-    voice_male_id: "pNInz6obpgDQGcFmaJgB"
-    voice_female_id: "21m00Tcm4TlvDq8ikWAM"
+    voice_male: "onyx"
+    voice_female: "nova"
     episode_length_min: 7
     youtube_category_id: "25"
+    search_queries:
+      - "biggest world news story today geopolitics conflict politics"
+      - "major international news breaking today"
+      - "top global news event this week"
     tags:
       - news
       - daily briefing
       - current events
       - world news
       - morning news
+
+  - id: tech_daily
+    name: "The Tech Pod"
+    niche: "technology, AI, and science news"
+    description: "The Tech Pod — the biggest stories in AI, tech, and science, explained clearly every day."
+    host_male: "Alex"
+    host_female: "Sarah"
+    voice_male: "onyx"
+    voice_female: "nova"
+    episode_length_min: 7
+    youtube_category_id: "28"
+    search_queries:
+      - "biggest AI artificial intelligence news today"
+      - "major tech company news today Apple Google Microsoft Meta"
+      - "top science technology breakthrough this week"
+    tags:
+      - technology
+      - AI
+      - artificial intelligence
+      - tech news
+      - science
