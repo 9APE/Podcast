@@ -10,6 +10,7 @@ from agents.script_writer import ScriptWriter
 from agents.fact_checker import FactChecker
 from agents.audio_producer import AudioProducer
 from agents.publisher import Publisher
+from agents.analytics_agent import AnalyticsAgent
 
 logging.basicConfig(
     level=logging.INFO,
@@ -173,6 +174,17 @@ def run_channel(channel):
         success = run_episode(channel, episode_id, topic)
         results.append({"episode_id": episode_id, "topic": topic["title"], "success": success})
         logger.info(f"Episode {episode_id}: {'OK' if success else 'FAILED'}")
+
+    # Stage 7: Analytics — run once per channel after all episodes are published
+    published_count = sum(1 for r in results if r["success"])
+    if published_count > 0:
+        logger.info(f"Stage 7: Analytics review for {channel_id}")
+        try:
+            rec = AnalyticsAgent(channel).run()
+            if rec.get("summary"):
+                logger.info(f"Analytics: {rec['summary']}")
+        except Exception as e:
+            logger.warning(f"Analytics stage failed (non-fatal): {e}")
 
     return results
 

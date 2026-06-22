@@ -277,4 +277,53 @@ class Publisher:
         ET.SubElement(item, "guid").text = episode_id
         ET.SubElement(item, "{%s}episodeType" % ns["itunes"]).text = "full"
         ET.SubElement(item, "{%s}episode" % ns["itunes"]).text = str(episode_number)
-        ET.SubElement(it
+        ET.SubElement(item, "{%s}explicit" % ns["itunes"]).text = "false"
+        if audio_url:
+            ET.SubElement(item, "enclosure", {
+                "url": audio_url,
+                "type": "audio/mpeg",
+                "length": str(audio_size)
+            })
+        ET.SubElement(item, "{%s}duration" % ns["itunes"]).text = str(
+            self.channel.get("episode_length_min", 7) * 60
+        )
+
+        tree = ET.ElementTree(root)
+        ET.indent(tree, space="  ")
+        tree.write(str(RSS_PATH), encoding="unicode", xml_declaration=True)
+        logger.info(f"RSS feed updated — episode {episode_number}")
+
+    def publish(self, audio_path, topic, episode_id, episode_dir):
+        import json as _json
+        audio_path = Path(audio_path)
+
+        # Load sources from research bundle for description
+        sources = []
+        research_path = Path(episode_dir) / "research.json"
+        if research_path.exists():
+            try:
+                research = _json.loads(research_path.read_text())
+                sources = research.get("sources", [])
+            except Exception:
+                pass
+
+        logger.info("Creating thumbnail")
+        thumbnail_path = self._create_thumbnail(topic["title"], episode_dir)
+
+        logger.info("Creating video")
+        video_path = self._create_video(audio_path, thumbnail_path, episode_dir)
+
+        logger.info("Uploading to YouTube")
+        youtube_url = self._upload_youtube(video_path, topic, episode_id, sources)
+
+        logger.info("Uploading audio to GitHub Releases")
+        audio_url = self._upload_to_github_release(audio_path, episode_id)
+
+        logger.info("Updating RSS feed")
+        self._update_rss(episode_id, topic, audio_url, youtube_url, audio_path)
+
+        return {
+            "youtube_url": youtube_url,
+            "audio_url": audio_url,
+            "rss_url": f"{GITHUB_PAGES_URL}/rss/feed.xml"
+        }
