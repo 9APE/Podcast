@@ -1,0 +1,15 @@
+{
+  "episode_id": "tech_daily-2026-06-22-t5",
+  "stage": "audio_produced",
+  "topic": {
+    "title": "DiffusionGemma: How Google's Diffusion Language Model Changes AI Text Generation | Shubhamraj Singh",
+    "url": "https://shubhamrajsingh.com/blog/diffusion-gemma-parallel-text-generation/",
+    "summary": "DiffusionGemma: How Google's Diffusion Language Model Changes AI Text Generation | Shubhamraj Singh\n\nBack to Blog\n\n## Why DiffusionGemma Matters for Anyone Building With AI\n\nEvery large language model you\u2019ve used, from GPT-4o to Claude to Llama, generates text the same way. One token at a time, left to right, each word waiting for the previous one to finish. This autoregressive approach has been t",
+    "published_date": "2026-06-22T00:00:00.000Z",
+    "age_hours": "< 24h"
+  },
+  "research_path": "episodes/tech_daily-2026-06-22-t5/research.json",
+  "script_path": "episodes/tech_daily-2026-06-22-t5/script.txt",
+  "verified_script_path": "episodes/tech_daily-2026-06-22-t5/script_verified.txt",
+  "audio_path": "episodes/tech_daily-2026-06-22-t5/episode.mp3"
+}

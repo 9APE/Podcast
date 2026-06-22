@@ -1,0 +1,17 @@
+{
+  "episode_id": "tech_daily-2026-06-22-t2",
+  "stage": "published",
+  "topic": {
+    "title": "Your iPhone Can Now Run 70B AI Models",
+    "url": "https://www.techjuice.pk/core-ai-explained-apples-new-on-device-llm-framework-for-iphone-ipad-and-mac/",
+    "summary": "# Your iPhone Can Now Run 70B AI Models\n\nAuthor: Abdul Wasay\nPublished: 2026-06-22T05:44:06+00:00\nSource: techjuice.pk (techjuice.pk)\nLanguage: en\n\n## Story\n\nYour iPhone Can Now Run 70B AI Models\n\n# Core AI Explained: Apple\u2019s New On-Device LLM Framework\n\nAdd as a preferredSource on Google\n\nApple announced Core AI, the official successor to Core ML and the unified framework that now underlies Apple",
+    "published_date": "2026-06-22T05:44:06.000Z",
+    "age_hours": "< 24h"
+  },
+  "research_path": "episodes/tech_daily-2026-06-22-t2/research.json",
+  "script_path": "episodes/tech_daily-2026-06-22-t2/script.txt",
+  "verified_script_path": "episodes/tech_daily-2026-06-22-t2/script_verified.txt",
+  "audio_path": "episodes/tech_daily-2026-06-22-t2/episode.mp3",
+  "youtube_url": "https://youtube.com/watch?v=qscjF1oTRyU",
+  "rss_url": "https://9ape.github.io/Podcast/rss/feed.xml"
+}
