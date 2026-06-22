@@ -133,7 +133,8 @@ class AudioProducer:
         )
 
         with open(output_path, "wb") as f:
-            f.write(data)
+            for chunk in data:
+                f.write(chunk)
 
     def _tts_openai(self, text, speaker, output_path):
         """Fallback TTS using OpenAI gpt-4o-mini-tts with personality instructions."""

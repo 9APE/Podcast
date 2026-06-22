@@ -42,16 +42,26 @@ class TrendScout:
         self._init_db()
 
     def _setup_youtube(self):
-        secret = json.loads(os.environ["YOUTUBE_CLIENT_SECRET"])
-        creds = Credentials(
-            token=None,
-            refresh_token=os.environ["YOUTUBE_REFRESH_TOKEN"],
-            token_uri="https://oauth2.googleapis.com/token",
-            client_id=secret["installed"]["client_id"],
-            client_secret=secret["installed"]["client_secret"],
-            scopes=["https://www.googleapis.com/auth/youtube.upload"]
-        )
-        self.youtube = build("youtube", "v3", credentials=creds)
+        # Public data (trending) uses a plain API key — no OAuth needed.
+        # OAuth is only required for uploads (publisher.py handles that).
+        api_key = os.environ.get("YOUTUBE_API_KEY", "")
+        if api_key:
+            self.youtube = build("youtube", "v3", developerKey=api_key)
+            logger.info("TrendScout: using YouTube API key for trending")
+        else:
+            # Fall back to OAuth if no API key; will likely 403 on videos.list
+            # but we'll catch it and use Exa instead.
+            secret = json.loads(os.environ["YOUTUBE_CLIENT_SECRET"])
+            creds = Credentials(
+                token=None,
+                refresh_token=os.environ["YOUTUBE_REFRESH_TOKEN"],
+                token_uri="https://oauth2.googleapis.com/token",
+                client_id=secret["installed"]["client_id"],
+                client_secret=secret["installed"]["client_secret"],
+                scopes=["https://www.googleapis.com/auth/youtube.upload"]
+            )
+            self.youtube = build("youtube", "v3", credentials=creds)
+            logger.warning("TrendScout: YOUTUBE_API_KEY not set — YouTube trending may 403")
 
     def _init_db(self):
         conn = sqlite3.connect(DB_PATH)
@@ -128,7 +138,7 @@ class TrendScout:
             f"most searched question trending news story {today}",
             f"viral controversy debate topic {today}",
         ]
-        candidates = []
+        raw_candidates = []
         for q in queries:
             try:
                 results = self.exa.search_and_contents(
@@ -136,14 +146,57 @@ class TrendScout:
                 )
                 for r in results.results:
                     if r.title and not self._is_seen(r.title):
-                        candidates.append({
+                        raw_candidates.append({
                             "title": r.title,
                             "url": r.url,
                             "summary": (r.text or "")[:300],
                         })
             except Exception as e:
                 logger.warning(f"Exa fallback failed: {e}")
-        return candidates
+
+        if not raw_candidates:
+            return []
+
+        # Ask Claude to filter garbage and reframe as podcast-ready titles.
+        # Raw Exa results often return YouTube page titles, not real topics.
+        titles_block = "\n".join(f"{i+1}. {c['title']}" for i, c in enumerate(raw_candidates[:20]))
+        try:
+            response = self.claude.messages.create(
+                model="claude-haiku-4-5-20251001",
+                max_tokens=800,
+                messages=[{
+                    "role": "user",
+                    "content": (
+                        f"Today is {today}. Here are raw search result titles from Exa:\n\n{titles_block}\n\n"
+                        "Filter out any raw YouTube page titles, navigation links, or generic page names. "
+                        "Keep only real news stories or viral topics. "
+                        "Rewrite each keeper as a podcast episode title (MrBeast-style, bold, specific). "
+                        "Return as JSON array of strings, max 5 items:\n"
+                        "[\"Title 1\", \"Title 2\", ...]\n\n"
+                        "Return ONLY the JSON array."
+                    )
+                }]
+            )
+            raw = response.content[0].text.strip()
+            if raw.startswith("```"):
+                raw = raw.split("```")[1]
+                if raw.startswith("json"):
+                    raw = raw[4:]
+            cleaned_titles = json.loads(raw.strip())
+            # Rebuild with original URLs/summaries where possible
+            url_map = {c["title"]: c for c in raw_candidates}
+            candidates = []
+            for title in cleaned_titles:
+                match = next((c for c in raw_candidates if c["title"] in title or title in c["title"]), None)
+                candidates.append({
+                    "title": title,
+                    "url": match["url"] if match else "",
+                    "summary": match["summary"] if match else "",
+                })
+            return candidates
+        except Exception as e:
+            logger.warning(f"Exa fallback Claude filter failed: {e} — returning raw")
+            return raw_candidates
 
     def _claude_rank_trends(self, videos, n):
         """

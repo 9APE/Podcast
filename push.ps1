@@ -29,7 +29,7 @@ git push origin main
 if ($LASTEXITCODE -eq 0) {
     Write-Host "`nDone! All changes pushed." -ForegroundColor Green
 } else {
-    Write-Host "`nPush failed — check output above." -ForegroundColor Red
+    Write-Host "Push failed - check output above." -ForegroundColor Red
 }
 
-Read-Host "`nPress Enter to close"
+Read-Host "Press Enter to close"
