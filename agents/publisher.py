@@ -90,26 +90,77 @@ class Publisher:
         ], check=True, capture_output=True)
         return video_path
 
+    def _build_seo_title(self, topic):
+        """Build a keyword-rich, searchable title under 100 chars."""
+        channel_name = self.channel.get("name", "The News Pod")
+        raw = topic["title"].strip()
+
+        # Load analytics recommendations if available
+        rec_path = Path("analytics/recommendations.json")
+        seo_format = None
+        if rec_path.exists():
+            try:
+                rec = json.loads(rec_path.read_text())
+                seo_format = rec.get("seo_title_format")
+            except Exception:
+                pass
+
+        if seo_format:
+            try:
+                title = seo_format.format(
+                    topic_title=raw,
+                    channel_name=channel_name,
+                    date=datetime.now().strftime("%b %d")
+                )
+                return title[:100]
+            except Exception:
+                pass
+
+        # Default SEO format: topic | channel | date
+        date_short = datetime.now().strftime("%b %d, %Y")
+        title = f"{raw[:70]} | {channel_name} | {date_short}"
+        return title[:100]
+
     def _build_description(self, topic, sources):
         date_str = datetime.now().strftime("%B %d, %Y")
         tags = self.channel.get("tags", ["news", "daily briefing"])
+        channel_name = self.channel.get("name", "The News Pod")
 
         sources_lines = "\n".join([
             f"[{i+1}] {s.get('title', 'Source')}\n     {s.get('url', '')}"
             for i, s in enumerate(sources)
         ])
 
+        # Load custom CTA from analytics recommendations if available
+        ratings_cta = "If this episode was useful, leave us a rating — it helps more people find us."
+        rec_path = Path("analytics/recommendations.json")
+        if rec_path.exists():
+            try:
+                rec = json.loads(rec_path.read_text())
+                custom_cta = rec.get("description_hook", "")
+                if custom_cta:
+                    ratings_cta = custom_cta
+            except Exception:
+                pass
+
+        # Keyword-rich opening hook (2-3 sentences, searchable)
+        hook = (
+            f"Today on {channel_name} ({date_str}): {topic['title']}. "
+            f"Alex and Sarah break down everything you need to know — "
+            f"what happened, why it matters, and what comes next."
+        )
+
         return (
+            f"{hook}\n\n"
             f"{self.channel.get('description', '')}\n\n"
-            f"Today ({date_str}): {topic['title']}\n\n"
             f"SOURCES:\n{sources_lines}\n\n"
-            f"All facts are sourced and verified. Produced with AI assistance.\n\n"
+            f"All facts are sourced and verified.\n\n"
+            f"{ratings_cta}\n\n"
             f"#{' #'.join(tags)}"
         )
 
     def _upload_youtube(self, video_path, topic, episode_id, sources=None):
-        date_str = datetime.now().strftime("%B %d, %Y")
-        title = f"{topic['title'][:90]} | {date_str}"
+        title = self._build_seo_title(topic)
         tags = self.channel.get("tags", ["news", "daily briefing"])
         description = self._build_description(topic, sources or [])
         body = {
@@ -226,53 +277,4 @@ class Publisher:
         ET.SubElement(item, "guid").text = episode_id
         ET.SubElement(item, "{%s}episodeType" % ns["itunes"]).text = "full"
         ET.SubElement(item, "{%s}episode" % ns["itunes"]).text = str(episode_number)
-        ET.SubElement(item, "{%s}explicit" % ns["itunes"]).text = "false"
-        if audio_url:
-            ET.SubElement(item, "enclosure", {
-                "url": audio_url,
-                "type": "audio/mpeg",
-                "length": str(audio_size)
-            })
-        ET.SubElement(item, "{%s}duration" % ns["itunes"]).text = str(
-            self.channel.get("episode_length_min", 7) * 60
-        )
-
-        tree = ET.ElementTree(root)
-        ET.indent(tree, space="  ")
-        tree.write(str(RSS_PATH), encoding="unicode", xml_declaration=True)
-        logger.info(f"RSS feed updated — episode {episode_number}")
-
-    def publish(self, audio_path, topic, episode_id, episode_dir):
-        import json as _json
-        audio_path = Path(audio_path)
-
-        # Load sources from research bundle for description
-        sources = []
-        research_path = Path(episode_dir) / "research.json"
-        if research_path.exists():
-            try:
-                research = _json.loads(research_path.read_text())
-                sources = research.get("sources", [])
-            except Exception:
-                pass
-
-        logger.info("Creating thumbnail")
-        thumbnail_path = self._create_thumbnail(topic["title"], episode_dir)
-
-        logger.info("Creating video")
-        video_path = self._create_video(audio_path, thumbnail_path, episode_dir)
-
-        logger.info("Uploading to YouTube")
-        youtube_url = self._upload_youtube(video_path, topic, episode_id, sources)
-
-        logger.info("Uploading audio to GitHub Releases")
-        audio_url = self._upload_to_github_release(audio_path, episode_id)
-
-        logger.info("Updating RSS feed")
-        self._update_rss(episode_id, topic, audio_url, youtube_url, audio_path)
-
-        return {
-            "youtube_url": youtube_url,
-            "audio_url": audio_url,
-            "rss_url": f"{GITHUB_PAGES_URL}/rss/feed.xml"
-        }
+        ET.SubElement(it

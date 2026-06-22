@@ -1,0 +1,21 @@
+{
+  "_instructions": "Export your analytics from creators.spotify.com -> Analytics -> Export and replace this file. The analytics agent reads this every night to improve the podcast automatically.",
+  "channel": {
+    "total_followers": 0,
+    "avg_completion_rate": 0.0,
+    "top_age_group": "",
+    "top_gender": "",
+    "top_countries": []
+  },
+  "episodes": [
+    {
+      "_example": "Delete this object and replace with real data",
+      "episode_id": "news_daily-2026-06-22-t1",
+      "title": "Example Episode Title",
+      "plays": 0,
+      "avg_completion_rate": 0.0,
+      "followers_gained": 0,
+      "published_date": "2026-06-22"
+    }
+  ]
+}
