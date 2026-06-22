@@ -9,6 +9,7 @@ channels:
     voice_female: "nova"
     episode_length_min: 7
     max_topics: 5
+    audio_backend: notebooklm
     youtube_category_id: "25"
     use_trend_scout: true
     # Fallback queries used only if TrendScout fails

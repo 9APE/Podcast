@@ -127,7 +127,16 @@ def run_episode(channel, episode_id, topic):
         if state["stage"] == "fact_checked":
             logger.info("Stage 5: Audio Production")
             script = Path(state["verified_script_path"]).read_text()
-            audio_path = AudioProducer(channel).produce(script, episode_dir)
+            backend = channel.get("audio_backend", "tts")
+            if backend == "notebooklm":
+                logger.info("Stage 5: using NotebookLM for audio")
+                from agents.notebooklm_producer import NotebookLMProducer
+                research = json.loads(Path(state["research_path"]).read_text())
+                audio_path = NotebookLMProducer(channel).produce(
+                    script, research, state["topic"], episode_dir
+                )
+            else:
+                audio_path = AudioProducer(channel).produce(script, episode_dir)
             state.update({"audio_path": str(audio_path), "stage": "audio_produced"})
             save_state(state)
 
