@@ -7,3 +7,4 @@ google-auth-httplib2>=0.2.0
 Pillow>=10.0.0
 PyYAML>=6.0
 requests>=2.31.0
+cartesia>=1.0.0

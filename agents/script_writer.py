@@ -9,6 +9,7 @@ import anthropic
 logger = logging.getLogger(__name__)
 STATE_DIR = Path("state")
 
+
 # ---------------------------------------------------------------------------
 # Spoken-language post-processor
 # Forces contractions and bans formal written English before TTS.
@@ -81,7 +82,6 @@ class ScriptWriter:
         self.claude = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
 
     def _get_recent_episodes(self, limit=5):
-        """Pull recent published episode topics for continuity references."""
         if not STATE_DIR.exists():
             return []
         episodes = []
@@ -121,9 +121,8 @@ class ScriptWriter:
         if recent:
             recent_str = "\n".join([f"  - {e['date']}: {e['title']}" for e in recent])
             continuity_block = (
-                f"\nRecent episodes for continuity (only reference if today's story genuinely connects):\n"
-                f"{recent_str}\n"
-                f"If relevant, one host says naturally: 'So if you heard our episode about [topic], this is basically the sequel.'\n"
+                f"\nRecent episodes for continuity:\n{recent_str}\n"
+                f"If relevant, one host says naturally: 'If you caught our episode on [topic], this is basically the sequel.'\n"
             )
 
         response = self.claude.messages.create(
@@ -132,61 +131,85 @@ class ScriptWriter:
             messages=[{
                 "role": "user",
                 "content": (
-                    f"You're writing a script for \"{channel_name}\" — a daily news podcast that sounds like two smart friends\n"
-                    f"genuinely reacting to the news together. Think Google NotebookLM's Audio Overview style:\n"
-                    f"real reactions, interruptions, unfinished thoughts, energy that pulls you in.\n\n"
+                    f"You are a world-class podcast script writer. Write a script for \"{channel_name}\" "
+                    f"that sounds EXACTLY like Google NotebookLM's Audio Overview — two real humans having "
+                    f"a genuine, unscripted-feeling conversation. Not a news read. Not a presentation. "
+                    f"A messy, energetic, human conversation.\n\n"
+
                     f"Two hosts:\n"
-                    f"- {host_male.upper()}: sharp, a bit skeptical, delivers facts with confidence and dry wit.\n"
-                    f"  Occasionally says 'hang on' or pushes back before coming around.\n"
-                    f"- {host_female.upper()}: genuinely curious, emotionally expressive, reacts fast.\n"
-                    f"  Doesn't wait for {host_male} to finish before jumping in with a reaction.\n\n"
-                    f"Write a two-host DIALOGUE. Target: {word_count} words (~{length_min} minutes).\n\n"
-                    f"Today's story: {topic['title']}\n\n"
-                    f"Verified facts — use ONLY these:\n{claims_text}\n\n"
-                    f"Sources:\n{sources_text}\n"
+                    f"- {host_male.upper()}: sharp, confident, slightly skeptical. Dry wit. Pushes back then concedes.\n"
+                    f"- {host_female.upper()}: warm, fast reactor, emotionally expressive. Jumps in before {host_male} finishes.\n\n"
+
+                    f"TODAY'S STORY: {topic['title']}\n\n"
+                    f"VERIFIED FACTS (use only these):\n{claims_text}\n\n"
+                    f"SOURCES:\n{sources_text}\n"
                     f"{continuity_block}\n"
 
-                    f"SPOKEN LANGUAGE RULES — these are absolute, no exceptions:\n"
-                    f"- ALWAYS use contractions: it's, that's, they're, we're, you're, can't, won't, don't,\n"
-                    f"  doesn't, didn't, wouldn't, couldn't, I've, we've, I'd, I'll, let's\n"
-                    f"- NEVER write: it is, that is, they are, we are, cannot, will not, do not, does not\n"
-                    f"- Write EXACTLY how people talk, not how they write\n"
-                    f"- Use filler words where natural: 'okay so', 'right', 'I mean', 'look', 'here's the thing'\n"
-                    f"- Incomplete sentences are fine when interrupted: '{host_male}: And what's wild is—'\n"
-                    f"  '{host_female}: —wait, stop. Say that number again.'\n\n"
+                    f"TARGET LENGTH: {word_count} words (~{length_min} minutes)\n\n"
 
-                    f"FORMATTING:\n"
-                    f"- Every line starts with [{host_male.upper()}]: or [{host_female.upper()}]: — no exceptions\n"
-                    f"- Cite sources naturally: 'Reuters says...', 'according to the BBC...', 'the FT's reporting that...'\n"
-                    f"- No em dashes mid-sentence except for interruptions. No bullet points.\n\n"
+                    f"═══ CRITICAL RULES — EVERY SINGLE ONE MUST BE FOLLOWED ═══\n\n"
 
-                    f"PACING (this goes straight to text-to-speech audio):\n"
-                    f"- Short punchy sentences: 8-14 words normally, 4-7 words for key facts\n"
-                    f"- Good rhythm example: 'The number's hard to believe. Four hundred billion. Gone in two days.'\n"
-                    f"- When one host says a shocking number, the OTHER echoes it immediately:\n"
-                    f"  [{host_male.upper()}]: The death toll hit twelve thousand.\n"
-                    f"  [{host_female.upper()}]: Twelve thousand people. That's — okay.\n"
-                    f"- Never two sentences over 18 words in a row. Break them up.\n\n"
+                    f"RULE 1 — LINE LENGTH: Each line of dialogue must be 80-100 characters MAX.\n"
+                    f"If a thought is longer, SPLIT it across two lines with the same speaker.\n"
+                    f"Short lines = natural TTS rhythm. Long lines = robotic.\n\n"
 
-                    f"ENERGY AND REACTIONS:\n"
-                    f"- No host speaks more than 3-4 sentences before the other jumps in\n"
-                    f"- Every 60-90 seconds: a genuine 'wait, what?' moment — a reversal, a contradiction, a scale that doesn't compute\n"
-                    f"- {host_female} uses short raw reactions regularly: 'No.', 'Stop.', 'That's insane.', 'Okay but WHY.',\n"
-                    f"  'I genuinely didn't know that.', 'Hold on hold on hold on.'\n"
-                    f"- {host_male} pushes back at least once then concedes: 'okay yeah, I'll give you that'\n"
-                    f"- After a concession: {host_female} escalates, doesn't stay neutral\n"
-                    f"- Use open loops: tease something surprising, hold off the payoff for 2-3 exchanges\n"
-                    f"- Hosts finish each other's sentences occasionally\n"
-                    f"- One genuine moment of dark/dry humor is allowed if it fits the story\n\n"
+                    f"RULE 2 — FILLER WORDS (mandatory, not optional):\n"
+                    f"Every 2-3 lines, one host MUST use one of these natural speech fillers:\n"
+                    f"  'Uh,' / 'Um,' / 'I mean,' / 'Right, so' / 'Okay but' / 'Yeah, and'\n"
+                    f"  'You know what,' / 'Here's the thing—' / 'So, like,' / 'And, uh,'\n"
+                    f"These are NOT optional decoration. They are the PRIMARY reason NotebookLM sounds human.\n\n"
+
+                    f"RULE 3 — NATURAL PAUSES via punctuation (TTS reads these as breathing pauses):\n"
+                    f"  '...' = hesitation pause — use when a host is searching for words\n"
+                    f"  ',' = micro pause — use freely inside sentences\n"
+                    f"  '—' = hard cut/interruption — host gets cut off mid-sentence\n"
+                    f"  '. ' (short sentence) = natural breath. Use constantly.\n"
+                    f"WRONG: 'The situation in the region has deteriorated significantly over the past month.'\n"
+                    f"RIGHT: 'The situation... it's bad. Like, really bad. Over the past month, uh, it's just—'\n\n"
+
+                    f"RULE 4 — INTERRUPTIONS (at least 4 per script):\n"
+                    f"  [{host_male.upper()}]: And what's crazy is the number is actually—\n"
+                    f"  [{host_female.upper()}]: Wait, what number? Say it.\n"
+                    f"The interrupted host's line ends with '—'. The other host cuts straight in.\n\n"
+
+                    f"RULE 5 — REACTIONS must be SHORT and RAW (1-6 words):\n"
+                    f"  'No way.' / 'Stop.' / 'That's insane.' / 'Okay, wow.' / 'Hold on.'\n"
+                    f"  'Wait, seriously?' / 'That's... a lot.' / 'Hm. Yeah.'\n"
+                    f"NEVER a full sentence reaction. Raw. Punchy. Unexpected.\n\n"
+
+                    f"RULE 6 — STRUGGLE MOMENTS (at least 2 per script):\n"
+                    f"One host briefly can't find the right word:\n"
+                    f"  'It's like... I don't know, there's no good word for it.'\n"
+                    f"  'How do I even— yeah, it's just wild.'\n\n"
+
+                    f"RULE 7 — ECHO KEY NUMBERS immediately:\n"
+                    f"  [{host_male.upper()}]: Twelve thousand people.\n"
+                    f"  [{host_female.upper()}]: Twelve thousand. In a week.\n\n"
+
+                    f"RULE 8 — SPOKEN LANGUAGE ONLY:\n"
+                    f"NEVER write: 'it is', 'cannot', 'they are', 'will not', 'does not'\n"
+                    f"ALWAYS write: 'it's', 'can't', 'they're', 'won't', 'doesn't'\n\n"
+
+                    f"RULE 9 — NO HOST SPEAKS MORE THAN 3 LINES STRAIGHT.\n"
+                    f"After 3 lines max, the other host must react — even if just one word.\n\n"
 
                     f"STRUCTURE:\n"
-                    f"HOOK (30s): One host opens cold with ONE shocking fact or contradiction. No greetings. No intro music cue.\n"
-                    f"SETUP (30s): Both hosts briefly frame why this story matters RIGHT NOW\n"
-                    f"STORY (4-5 min): Deep back-and-forth — what happened, key reactions, implications, surprising angles\n"
-                    f"FORWARD (45s): What to watch next, what this could become\n"
-                    f"CLOSE (30s): Punchy wrap-up, ask for a subscribe, sign off with energy — not a slow fade\n\n"
+                    f"HOOK (30s): Open cold with ONE shocking fact. No greetings.\n"
+                    f"SETUP (30s): Frame why this matters today.\n"
+                    f"STORY (4-5 min): Deep back-and-forth. Contradictions. Surprising angles.\n"
+                    f"FORWARD (45s): What to watch next.\n"
+                    f"CLOSE (30s): Punchy wrap-up. Ask for subscribe. Sign off with energy.\n\n"
 
-                    f"Start immediately with [{host_male.upper()}]: or [{host_female.upper()}]: — no stage directions, no headers, no labels."
+                    f"FORMAT: Every line starts with [{host_male.upper()}]: or [{host_female.upper()}]: — nothing else.\n"
+                    f"No stage directions. No headers. No labels. Start immediately.\n\n"
+
+                    f"EXAMPLE of correct style (study this):\n"
+                    f"[{host_male.upper()}]: Okay so — forty billion dollars.\n"
+                    f"[{host_female.upper()}]: Sorry, what?\n"
+                    f"[{host_male.upper()}]: Gone. In, uh, seventy-two hours.\n"
+                    f"[{host_female.upper()}]: That's... I mean, how is that even—\n"
+                    f"[{host_male.upper()}]: That's what I'm saying. It doesn't make sense.\n"
+                    f"[{host_female.upper()}]: Okay. Okay, walk me through it.\n"
                 )
             }]
         )

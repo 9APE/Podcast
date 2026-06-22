@@ -38,6 +38,7 @@ jobs:
           YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
           YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CARTESIA_API_KEY: ${{ secrets.CARTESIA_API_KEY }}
         run: python orchestrator.py
 
       - name: Commit state and RSS back to repo

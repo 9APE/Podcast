@@ -4,24 +4,28 @@ import logging
 import subprocess
 from pathlib import Path
 
-from openai import OpenAI
-
 logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
-# Voice personality instructions for gpt-4o-mini-tts
-# These make the voices sound human — emotional, paced, alive.
+# Voice configuration
+# Cartesia Sonic is used when CARTESIA_API_KEY is set — it produces
+# expressive, emotionally natural speech (what NotebookLM clones use).
+# Falls back to OpenAI gpt-4o-mini-tts if Cartesia key is not set.
 # ---------------------------------------------------------------------------
-VOICE_CONFIG = {
+CARTESIA_VOICES = {
+    "ALEX": "a0e99841-438c-4a64-b679-ae501e7d6091",   # Male, confident
+    "SARAH": "694f9389-aac1-45b6-b726-9d9369183238",  # Female, warm
+}
+
+OPENAI_VOICE_CONFIG = {
     "ALEX": {
         "voice": "onyx",
         "instructions": (
-            "You're Alex — a sharp, confident news journalist hosting a fast-paced daily podcast. "
-            "Speak naturally and conversationally, like you're genuinely reacting to news with a colleague, not reading a script. "
-            "Your pace is slightly faster than normal conversation — energetic, direct, no filler pauses. "
-            "When delivering shocking facts or numbers, slow down just slightly and let the weight land. "
-            "Occasional dry wit is natural for you. "
-            "Never sound robotic or overly polished — you're a real person who finds this stuff genuinely interesting."
+            "You're Alex — a sharp, confident news journalist on a fast-paced daily podcast. "
+            "Speak naturally and conversationally, like you're genuinely reacting to news with a colleague. "
+            "Your pace is slightly faster than normal conversation — energetic, direct. "
+            "When delivering shocking facts, slow down slightly and let the weight land. "
+            "Occasional dry wit is natural. Never robotic or overly polished."
         ),
     },
     "SARAH": {
@@ -29,10 +33,9 @@ VOICE_CONFIG = {
         "instructions": (
             "You're Sarah — a curious, warm co-host on a daily news podcast. "
             "You react in real time — when something surprises you, let it show in your voice. "
-            "Speed up a little when excited, slow down when something is heavy or disturbing. "
-            "Short reactions like 'No.', 'Stop.', 'That's insane.' should feel spontaneous, not performed. "
-            "You sound like a smart friend who genuinely cares about understanding things, not a news anchor. "
-            "Never monotone — your voice has range and your emotions are real."
+            "Speed up when excited, slow down when something is heavy or disturbing. "
+            "Short reactions like 'No.', 'Stop.', 'That's insane.' should feel spontaneous. "
+            "You sound like a smart friend who genuinely cares. Never monotone."
         ),
     },
 }
@@ -40,11 +43,19 @@ VOICE_CONFIG = {
 
 class AudioProducer:
     def __init__(self, channel=None):
-        self.openai = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
         self.channel = channel or {}
+        self._use_cartesia = bool(os.environ.get("CARTESIA_API_KEY"))
+
+        if self._use_cartesia:
+            from cartesia import Cartesia
+            self._cartesia = Cartesia(api_key=os.environ["CARTESIA_API_KEY"])
+            logger.info("Using Cartesia Sonic for TTS")
+        else:
+            from openai import OpenAI
+            self._openai = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
+            logger.info("Using OpenAI gpt-4o-mini-tts for TTS (set CARTESIA_API_KEY for better voices)")
 
     def _parse_dialogue(self, script):
-        """Parse [ALEX]: / [SARAH]: tagged lines into (speaker, text) tuples."""
         lines = []
         pattern = re.compile(r'\[(ALEX|SARAH)\]:\s*(.*?)(?=\n\[(ALEX|SARAH)\]:|\Z)', re.DOTALL)
         for match in pattern.finditer(script):
@@ -55,8 +66,11 @@ class AudioProducer:
                 lines.append((speaker, text))
         return lines
 
-    def _split_into_chunks(self, text, max_chars=4000):
-        """Split long text into TTS-safe chunks at sentence boundaries."""
+    def _split_into_chunks(self, text, max_chars=200):
+        """
+        Split at sentence boundaries. Keep chunks short (200 chars max)
+        so TTS processes each beat separately — better pacing and emotion.
+        """
         sentences = re.split(r'(?<=[.!?])\s+', text)
         chunks, current = [], ""
         for sentence in sentences:
@@ -70,11 +84,43 @@ class AudioProducer:
             chunks.append(current)
         return chunks if chunks else [text[:max_chars]]
 
-    def _tts(self, text, speaker, output_path):
-        """Generate TTS audio using gpt-4o-mini-tts with personality instructions."""
-        config = VOICE_CONFIG.get(speaker, VOICE_CONFIG["ALEX"])
+    def _tts_cartesia(self, text, speaker, output_path):
+        """Generate TTS using Cartesia Sonic — most expressive option."""
+        voice_id = CARTESIA_VOICES.get(speaker, CARTESIA_VOICES["ALEX"])
+
+        ws = self._cartesia.tts.websocket()
+        output_format = {
+            "container": "raw",
+            "encoding": "pcm_f32le",
+            "sample_rate": 44100,
+        }
+
+        pcm_path = Path(str(output_path).replace(".mp3", ".pcm"))
+        with open(pcm_path, "wb") as f:
+            for output in ws.send(
+                model_id="sonic-english",
+                transcript=text,
+                voice_id=voice_id,
+                stream=True,
+                output_format=output_format,
+            ):
+                f.write(output["audio"])
+        ws.close()
+
+        # Convert raw PCM to MP3
+        subprocess.run([
+            "ffmpeg", "-y",
+            "-f", "f32le", "-ar", "44100", "-ac", "1",
+            "-i", str(pcm_path),
+            "-b:a", "128k", str(output_path)
+        ], check=True, capture_output=True)
+        pcm_path.unlink(missing_ok=True)
+
+    def _tts_openai(self, text, speaker, output_path):
+        """Fallback TTS using OpenAI gpt-4o-mini-tts with personality instructions."""
+        config = OPENAI_VOICE_CONFIG.get(speaker, OPENAI_VOICE_CONFIG["ALEX"])
         try:
-            response = self.openai.audio.speech.create(
+            response = self._openai.audio.speech.create(
                 model="gpt-4o-mini-tts",
                 voice=config["voice"],
                 input=text,
@@ -83,15 +129,20 @@ class AudioProducer:
             )
             response.stream_to_file(str(output_path))
         except Exception as e:
-            # Fallback to tts-1-hd if gpt-4o-mini-tts is unavailable
             logger.warning(f"gpt-4o-mini-tts failed ({e}), falling back to tts-1-hd")
-            response = self.openai.audio.speech.create(
+            response = self._openai.audio.speech.create(
                 model="tts-1-hd",
                 voice=config["voice"],
                 input=text,
                 response_format="mp3"
             )
             response.stream_to_file(str(output_path))
+
+    def _tts(self, text, speaker, output_path):
+        if self._use_cartesia:
+            self._tts_cartesia(text, speaker, output_path)
+        else:
+            self._tts_openai(text, speaker, output_path)
 
     def _create_silence(self, duration_ms, output_path):
         subprocess.run([
@@ -107,8 +158,6 @@ class AudioProducer:
         with open(list_file, "w") as f:
             for fp in file_paths:
                 f.write(f"file '{Path(fp).absolute()}'\n")
-        # Re-encode to consistent format so loudnorm doesn't SIGABRT on
-        # mixed-rate streams (OpenAI TTS is 24kHz; silence files are 44100Hz).
         subprocess.run([
             "ffmpeg", "-y", "-f", "concat", "-safe", "0",
             "-i", str(list_file), "-ar", "44100", "-ac", "1", "-b:a", "128k",
@@ -138,22 +187,19 @@ class AudioProducer:
         logger.info(f"Parsed {len(lines)} dialogue lines")
 
         silence_path = chunks_dir / "silence.mp3"
-        self._create_silence(400, silence_path)
+        self._create_silence(300, silence_path)  # 300ms gap between speakers
 
         audio_files = []
         file_idx = 0
 
         for speaker, text in lines:
             text_chunks = self._split_into_chunks(text)
-
             for chunk in text_chunks:
                 chunk_path = chunks_dir / f"line_{file_idx:04d}_{speaker.lower()}.mp3"
-                logger.info(f"TTS [{speaker}] ({len(chunk)} chars) voice={VOICE_CONFIG.get(speaker, {}).get('voice', 'onyx')}")
+                logger.info(f"TTS [{speaker}] ({len(chunk)} chars)")
                 self._tts(chunk, speaker, chunk_path)
                 audio_files.append(chunk_path)
                 file_idx += 1
-
-            # Short pause between speaker turns
             audio_files.append(silence_path)
 
         raw_path = episode_dir / "raw.mp3"
