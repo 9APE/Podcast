@@ -36,42 +36,104 @@ class Publisher:
         self.youtube = build("youtube", "v3", credentials=creds)
 
     def _create_thumbnail(self, title, episode_dir):
-        img = Image.new("RGB", (1280, 720), color=(12, 12, 22))
+        """
+        Bold, modern Spotify-style thumbnail.
+        Layout: vibrant color-block background, large geometric accent shapes,
+        channel name top-left, big title bottom-left, date badge bottom-right.
+        """
+        W, H = 1280, 720
+
+        # Per-channel color palettes — vivid, flat, high contrast
+        PALETTES = {
+            "The News Pod": {
+                "bg": (10, 10, 20),           # near-black
+                "block1": (255, 45, 85),       # hot pink/red
+                "block2": (30, 30, 60),        # dark navy
+                "accent": (255, 220, 0),       # yellow
+                "text_title": (255, 255, 255),
+                "text_sub": (255, 45, 85),
+            },
+            "The Tech Pod": {
+                "bg": (10, 20, 35),
+                "block1": (0, 200, 150),       # teal
+                "block2": (15, 40, 80),
+                "accent": (80, 160, 255),      # electric blue
+                "text_title": (255, 255, 255),
+                "text_sub": (0, 200, 150),
+            },
+        }
+        palette = PALETTES.get(self.channel.get("name", ""), PALETTES["The News Pod"])
+
+        img = Image.new("RGB", (W, H), color=palette["bg"])
         draw = ImageDraw.Draw(img)
 
-        try:
-            font_large = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 62)
-            font_small = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 36)
-        except OSError:
-            font_large = ImageFont.load_default()
-            font_small = font_large
+        # --- Background geometric shapes ---
+        # Large circle (top-right bleed)
+        cx, cy, r = W - 80, -60, 340
+        draw.ellipse([cx - r, cy - r, cx + r, cy + r], fill=palette["block1"])
 
-        # Accent bar
-        draw.rectangle([60, 195, 1220, 202], fill=(58, 110, 240))
+        # Smaller circle overlay (bottom-right)
+        cx2, cy2, r2 = W - 10, H + 30, 220
+        draw.ellipse([cx2 - r2, cy2 - r2, cx2 + r2, cy2 + r2], fill=palette["block2"])
 
-        # Channel name
-        draw.text((64, 118), self.channel.get("name", "Daily Briefing"), font=font_small, fill=(140, 150, 210))
+        # Thin accent stripe (diagonal feel via tall rectangle)
+        draw.rectangle([W - 420, 0, W - 380, H], fill=palette["accent"])
 
-        # Title wrapped
+        # Bottom-left accent block behind text
+        draw.rectangle([0, H - 180, W // 2 + 60, H], fill=(0, 0, 0, 0))  # transparent placeholder
+        # Solid left edge bar
+        draw.rectangle([0, 0, 8, H], fill=palette["block1"])
+
+        # --- Fonts ---
+        font_paths = [
+            "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+            "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
+            "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf",
+        ]
+        font_lg, font_md, font_sm = None, None, None
+        for fp in font_paths:
+            if Path(fp).exists():
+                font_lg = ImageFont.truetype(fp, 72)
+                font_md = ImageFont.truetype(fp, 38)
+                font_sm = ImageFont.truetype(fp, 28)
+                break
+        if not font_lg:
+            font_lg = font_md = font_sm = ImageFont.load_default()
+
+        # --- Channel name (top-left) ---
+        channel_name = self.channel.get("name", "DAILY BRIEFING").upper()
+        draw.text((36, 32), channel_name, font=font_md, fill=palette["text_sub"])
+
+        # --- Date badge (top-right area, below circle) ---
+        date_str = datetime.now().strftime("%b %d, %Y").upper()
+        draw.text((36, 86), date_str, font=font_sm, fill=(160, 160, 180))
+
+        # --- Title (large, bottom-left area, word-wrapped) ---
+        max_width = W - 460  # leave room for right shapes
         words = title.split()
-        lines, line = [], []
+        lines_out, line = [], []
         for word in words:
             test = " ".join(line + [word])
-            bbox = draw.textbbox((0, 0), test, font=font_large)
-            if bbox[2] - bbox[0] > 1150 and line:
-                lines.append(" ".join(line))
+            bbox = draw.textbbox((0, 0), test, font=font_lg)
+            if bbox[2] - bbox[0] > max_width and line:
+                lines_out.append(" ".join(line))
                 line = [word]
             else:
                 line.append(word)
         if line:
-            lines.append(" ".join(line))
+            lines_out.append(" ".join(line))
 
-        y = 230
-        for text_line in lines[:3]:
-            draw.text((64, y), text_line, font=font_large, fill=(235, 238, 255))
-            y += 78
+        # Position: start from bottom, go up
+        line_h = 84
+        total_text_h = len(lines_out[:4]) * line_h
+        y_start = H - total_text_h - 48
 
-        draw.text((64, 618), datetime.now().strftime("%B %d, %Y"), font=font_small, fill=(110, 120, 160))
+        for text_line in lines_out[:4]:
+            draw.text((36, y_start), text_line, font=font_lg, fill=palette["text_title"])
+            y_start += line_h
+
+        # --- "TODAY" label above title ---
+        draw.text((36, y_start - total_text_h - 44), "TODAY'S STORY", font=font_sm, fill=palette["accent"])
 
         path = Path(episode_dir) / "thumbnail.jpg"
         img.save(path, "JPEG", quality=95)

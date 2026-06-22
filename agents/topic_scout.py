@@ -135,14 +135,17 @@ class TopicScout:
             messages=[{
                 "role": "user",
                 "content": (
-                    f"Rank the top {n} most trending and impactful stories for "
+                    f"Pick the top {n} most interesting stories for "
                     f"\"{self.channel.get('name', 'a daily podcast')}\" "
                     f"focused on {self.channel.get('niche', 'world news')}.\n\n"
-                    f"Today is {today}. Strongly prefer stories published in the last 24 hours (< 24h). "
-                    f"Pick stories that are distinct — no two stories about the same event.\n\n"
+                    f"Today is {today}. Strongly prefer stories from the last 24 hours.\n\n"
+                    f"DIVERSITY RULE — this is critical: your {n} picks must cover DIFFERENT categories. "
+                    f"No two picks can be about the same topic, person, country, or ongoing conflict. "
+                    f"If Trump, Ukraine, Gaza, or any single person/war appears more than once in your picks, you have failed. "
+                    f"Spread across: politics, economy, science, environment, society, technology, health, culture.\n\n"
                     f"Candidates:\n{candidates_text}\n\n"
                     f"Reply with exactly {n} comma-separated numbers in order of importance. "
-                    f"Example format: 3,1,5,2,4 — numbers only, nothing else."
+                    f"Example: 3,1,5,2,4 — numbers only, nothing else."
                 )
             }]
         )

@@ -11,9 +11,12 @@ channels:
     max_topics: 5
     youtube_category_id: "25"
     search_queries:
-      - "biggest world news story today geopolitics conflict politics"
-      - "major international news breaking today"
-      - "top global news event this week"
+      - "major international politics diplomacy news today NOT Trump NOT Ukraine"
+      - "global economy markets business news breakthrough today"
+      - "science health environment climate news breakthrough today"
+      - "conflict war military crisis update today"
+      - "society culture human interest world news today"
+      - "unexpected surprising world news story today"
     tags:
       - news
       - daily briefing
@@ -33,9 +36,12 @@ channels:
     max_topics: 5
     youtube_category_id: "28"
     search_queries:
-      - "biggest AI artificial intelligence news today"
-      - "major tech company news today Apple Google Microsoft Meta"
-      - "top science technology breakthrough this week"
+      - "artificial intelligence AI model research breakthrough today"
+      - "major tech company product launch Apple Google Microsoft Meta Amazon today"
+      - "science space biology physics breakthrough discovery today"
+      - "cybersecurity privacy data hack news today"
+      - "robotics autonomous vehicles future tech news today"
+      - "startup funding acquisition tech business news today"
     tags:
       - technology
       - AI

@@ -8,10 +8,33 @@ from openai import OpenAI
 
 logger = logging.getLogger(__name__)
 
-# OpenAI voice assignments per host
-VOICE_MAP = {
-    "ALEX": "onyx",    # deep, authoritative male
-    "SARAH": "nova",   # warm, natural female
+# ---------------------------------------------------------------------------
+# Voice personality instructions for gpt-4o-mini-tts
+# These make the voices sound human — emotional, paced, alive.
+# ---------------------------------------------------------------------------
+VOICE_CONFIG = {
+    "ALEX": {
+        "voice": "onyx",
+        "instructions": (
+            "You're Alex — a sharp, confident news journalist hosting a fast-paced daily podcast. "
+            "Speak naturally and conversationally, like you're genuinely reacting to news with a colleague, not reading a script. "
+            "Your pace is slightly faster than normal conversation — energetic, direct, no filler pauses. "
+            "When delivering shocking facts or numbers, slow down just slightly and let the weight land. "
+            "Occasional dry wit is natural for you. "
+            "Never sound robotic or overly polished — you're a real person who finds this stuff genuinely interesting."
+        ),
+    },
+    "SARAH": {
+        "voice": "nova",
+        "instructions": (
+            "You're Sarah — a curious, warm co-host on a daily news podcast. "
+            "You react in real time — when something surprises you, let it show in your voice. "
+            "Speed up a little when excited, slow down when something is heavy or disturbing. "
+            "Short reactions like 'No.', 'Stop.', 'That's insane.' should feel spontaneous, not performed. "
+            "You sound like a smart friend who genuinely cares about understanding things, not a news anchor. "
+            "Never monotone — your voice has range and your emotions are real."
+        ),
+    },
 }
 
 
@@ -47,15 +70,28 @@ class AudioProducer:
             chunks.append(current)
         return chunks if chunks else [text[:max_chars]]
 
-    def _tts(self, text, voice, output_path):
-        """Generate TTS audio for a single chunk."""
-        response = self.openai.audio.speech.create(
-            model="tts-1-hd",
-            voice=voice,
-            input=text,
-            response_format="mp3"
-        )
-        response.stream_to_file(str(output_path))
+    def _tts(self, text, speaker, output_path):
+        """Generate TTS audio using gpt-4o-mini-tts with personality instructions."""
+        config = VOICE_CONFIG.get(speaker, VOICE_CONFIG["ALEX"])
+        try:
+            response = self.openai.audio.speech.create(
+                model="gpt-4o-mini-tts",
+                voice=config["voice"],
+                input=text,
+                instructions=config["instructions"],
+                response_format="mp3"
+            )
+            response.stream_to_file(str(output_path))
+        except Exception as e:
+            # Fallback to tts-1-hd if gpt-4o-mini-tts is unavailable
+            logger.warning(f"gpt-4o-mini-tts failed ({e}), falling back to tts-1-hd")
+            response = self.openai.audio.speech.create(
+                model="tts-1-hd",
+                voice=config["voice"],
+                input=text,
+                response_format="mp3"
+            )
+            response.stream_to_file(str(output_path))
 
     def _create_silence(self, duration_ms, output_path):
         subprocess.run([
@@ -108,13 +144,12 @@ class AudioProducer:
         file_idx = 0
 
         for speaker, text in lines:
-            voice = VOICE_MAP.get(speaker, "onyx")
             text_chunks = self._split_into_chunks(text)
 
             for chunk in text_chunks:
                 chunk_path = chunks_dir / f"line_{file_idx:04d}_{speaker.lower()}.mp3"
-                logger.info(f"TTS [{speaker}] ({len(chunk)} chars) voice={voice}")
-                self._tts(chunk, voice, chunk_path)
+                logger.info(f"TTS [{speaker}] ({len(chunk)} chars) voice={VOICE_CONFIG.get(speaker, {}).get('voice', 'onyx')}")
+                self._tts(chunk, speaker, chunk_path)
                 audio_files.append(chunk_path)
                 file_idx += 1
 
