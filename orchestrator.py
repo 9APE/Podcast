@@ -5,12 +5,14 @@ from datetime import datetime
 from pathlib import Path
 
 from agents.topic_scout import TopicScout
+from agents.trend_scout import TrendScout
 from agents.researcher import Researcher
 from agents.script_writer import ScriptWriter
 from agents.fact_checker import FactChecker
 from agents.audio_producer import AudioProducer
 from agents.publisher import Publisher
 from agents.analytics_agent import AnalyticsAgent
+from agents.shorts_writer import ShortsWriter
 
 logging.basicConfig(
     level=logging.INFO,
@@ -161,7 +163,11 @@ def run_channel(channel):
     max_topics = channel.get("max_topics", 5)
 
     logger.info(f"Channel {channel_id}: discovering top {max_topics} topics")
-    topics = TopicScout(channel).find_topics(n=max_topics)
+    if channel.get("use_trend_scout", False):
+        logger.info(f"Channel {channel_id}: using TrendScout (YouTube trending)")
+        topics = TrendScout(channel).find_topics(n=max_topics)
+    else:
+        topics = TopicScout(channel).find_topics(n=max_topics)
 
     if not topics:
         logger.error(f"Channel {channel_id}: no topics found — skipping")

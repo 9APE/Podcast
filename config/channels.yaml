@@ -1,8 +1,8 @@
 channels:
   - id: news_daily
     name: "The News Pod"
-    niche: "world news and current events"
-    description: "The News Pod — the most important stories of the day, clearly explained."
+    niche: "the most viral and trending topics people are searching on YouTube right now"
+    description: "The News Pod — the stories everyone's talking about, actually explained."
     host_male: "Alex"
     host_female: "Sarah"
     voice_male: "onyx"
@@ -10,24 +10,26 @@ channels:
     episode_length_min: 7
     max_topics: 5
     youtube_category_id: "25"
+    use_trend_scout: true
+    # Fallback queries used only if TrendScout fails
     search_queries:
-      - "major international politics diplomacy news today NOT Trump NOT Ukraine"
-      - "global economy markets business news breakthrough today"
-      - "science health environment climate news breakthrough today"
-      - "conflict war military crisis update today"
-      - "society culture human interest world news today"
-      - "unexpected surprising world news story today"
+      - "most viral trending topic news today"
+      - "biggest controversy debate story today"
+      - "most searched question trending today"
+      - "viral moment sports entertainment news today"
+      - "unexpected shocking story world news today"
     tags:
+      - trending
+      - viral
       - news
+      - explained
       - daily briefing
       - current events
-      - world news
-      - morning news
 
   - id: tech_daily
     name: "The Tech Pod"
-    niche: "technology, AI, and science news"
-    description: "The Tech Pod — the biggest stories in AI, tech, and science, explained clearly every day."
+    niche: "technology, AI, science, and the viral tech stories people can't stop talking about"
+    description: "The Tech Pod — AI, tech, and science stories explained clearly every day."
     host_male: "Alex"
     host_female: "Sarah"
     voice_male: "onyx"
@@ -35,6 +37,7 @@ channels:
     episode_length_min: 7
     max_topics: 5
     youtube_category_id: "28"
+    use_trend_scout: false
     search_queries:
       - "artificial intelligence AI model research breakthrough today"
       - "major tech company product launch Apple Google Microsoft Meta Amazon today"
