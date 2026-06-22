@@ -148,6 +148,31 @@ def run_episode(channel, episode_id, topic):
             save_state(state)
             logger.info(f"YouTube: {result.get('youtube_url')}")
 
+        # Stage 7: Shorts
+        if state["stage"] == "published" and state.get("verified_script_path"):
+            logger.info("Stage 7: Shorts")
+            try:
+                script = Path(state["verified_script_path"]).read_text()
+                shorts = ShortsWriter(channel).write(script, state["topic"], n=2)
+                if shorts:
+                    publisher = Publisher(channel)
+                    short_urls = publisher.publish_shorts(
+                        shorts,
+                        episode_dir,
+                        state["topic"],
+                        episode_id,
+                        state.get("youtube_url", "")
+                    )
+                    state.update({"short_urls": short_urls, "stage": "shorts_published"})
+                    save_state(state)
+                    logger.info(f"Shorts published: {short_urls}")
+                else:
+                    logger.warning("ShortsWriter returned no shorts — skipping")
+                    state["stage"] = "shorts_published"
+                    save_state(state)
+            except Exception as e:
+                logger.warning(f"Shorts stage failed (non-fatal): {e}")
+
         logger.info(f"Episode {episode_id} complete")
         return True
 

@@ -389,3 +389,61 @@ class Publisher:
             "audio_url": audio_url,
             "rss_url": f"{GITHUB_PAGES_URL}/rss/feed.xml"
         }
+
+    # ------------------------------------------------------------------
+    # Shorts publishing
+    # ------------------------------------------------------------------
+
+    def _upload_short(self, video_path, hook, topic, full_youtube_url, episode_id, short_index):
+        """Upload one Short to YouTube."""
+        topic_title = topic.get("title", "") if isinstance(topic, dict) else str(topic)
+        title = f"{hook} #Shorts"[:100]
+        description = (
+            f"{hook}\n\n"
+            f"From our full episode: {full_youtube_url}\n\n"
+            f"Subscribe for daily viral stories explained."
+        )
+        tags = self.channel.get("tags", []) + ["Shorts", "short", "viral"]
+        category_id = self.channel.get("youtube_category_id", "25")
+
+        body = {
+            "snippet": {
+                "title": title,
+                "description": description,
+                "tags": tags[:15],
+                "categoryId": category_id,
+            },
+            "status": {"privacyStatus": "public"},
+        }
+
+        media = MediaFileUpload(str(video_path), mimetype="video/mp4", resumable=True)
+        request = self.youtube.videos().insert(part="snippet,status", body=body, media_body=media)
+
+        response = None
+        while response is None:
+            _, response = request.next_chunk()
+
+        short_id = response.get("id", "")
+        short_url = f"https://www.youtube.com/shorts/{short_id}" if short_id else ""
+        logger.info(f"Short {short_index} uploaded: {short_url}")
+        return short_url
+
+    def publish_shorts(self, shorts, episode_dir, topic, episode_id, full_youtube_url):
+        """Produce and upload all Shorts for one episode. Non-fatal — returns list of URLs."""
+        from agents.shorts_producer import ShortsProducer
+
+        producer = ShortsProducer(self.channel)
+        short_urls = []
+
+        for short in shorts:
+            try:
+                video_path = producer.produce(short, episode_dir, short["index"])
+                url = self._upload_short(
+                    video_path, short["hook"], topic,
+                    full_youtube_url, episode_id, short["index"]
+                )
+                short_urls.append(url)
+            except Exception as e:
+                logger.warning(f"Short {short.get('index')} failed (non-fatal): {e}")
+
+        return short_urls
