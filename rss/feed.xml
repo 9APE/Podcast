@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+<rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" version="2.0">
   <channel>
     <title>The News Pod</title>
     <link>https://9ape.github.io/Podcast</link>
@@ -21,6 +21,90 @@
       <guid>news_daily-2026-06-21</guid>
       <enclosure url="https://github.com/9APE/Podcast/releases/download/news_daily-2026-06-21/news_daily-2026-06-21.mp3" type="audio/mpeg" length="15143123" />
       <itunes:duration>720</itunes:duration>
+    </item>
+    <item>
+      <title>US, Iran agree on ‘roadmap’ towards final deal in Switzerland talks | News | Al Jazeera</title>
+      <itunes:title>US, Iran agree on ‘roadmap’ towards final deal in Switzerland talks | News | Al Jazeera</itunes:title>
+      <description>Today's briefing: US, Iran agree on ‘roadmap’ towards final deal in Switzerland talks | News | Al Jazeera. Watch on YouTube: https://youtube.com/watch?v=4K_M4sy5BwI</description>
+      <pubDate>Mon, 22 Jun 2026 10:49:45 +0000</pubDate>
+      <guid>news_daily-2026-06-22-t1</guid>
+      <itunes:episodeType>full</itunes:episodeType>
+      <itunes:episode>2</itunes:episode>
+      <itunes:explicit>false</itunes:explicit>
+      <enclosure url="https://github.com/9APE/Podcast/releases/download/news_daily-2026-06-22-t1/news_daily-2026-06-22-t1.mp3" type="audio/mpeg" length="11479920" />
+      <itunes:duration>420</itunes:duration>
+    </item>
+    <item>
+      <title>A ‘cold blob’ in the Atlantic Ocean indicates ocean current troubles | The Week</title>
+      <itunes:title>A ‘cold blob’ in the Atlantic Ocean indicates ocean current troubles | The Week</itunes:title>
+      <description>Today's briefing: A ‘cold blob’ in the Atlantic Ocean indicates ocean current troubles | The Week. Watch on YouTube: https://youtube.com/watch?v=M9_dZAc-y4U</description>
+      <pubDate>Mon, 22 Jun 2026 10:57:56 +0000</pubDate>
+      <guid>news_daily-2026-06-22-t3</guid>
+      <itunes:episodeType>full</itunes:episodeType>
+      <itunes:episode>3</itunes:episode>
+      <itunes:explicit>false</itunes:explicit>
+      <enclosure url="https://github.com/9APE/Podcast/releases/download/news_daily-2026-06-22-t3/news_daily-2026-06-22-t3.mp3" type="audio/mpeg" length="10979622" />
+      <itunes:duration>420</itunes:duration>
+    </item>
+    <item>
+      <title>Scientists blast 'forever chemicals' with intense UV light, and water helps break them apart</title>
+      <itunes:title>Scientists blast 'forever chemicals' with intense UV light, and water helps break them apart</itunes:title>
+      <description>Today's briefing: Scientists blast 'forever chemicals' with intense UV light, and water helps break them apart. Watch on YouTube: https://youtube.com/watch?v=phUbkp79BFQ</description>
+      <pubDate>Mon, 22 Jun 2026 11:02:17 +0000</pubDate>
+      <guid>news_daily-2026-06-22-t4</guid>
+      <itunes:episodeType>full</itunes:episodeType>
+      <itunes:episode>4</itunes:episode>
+      <itunes:explicit>false</itunes:explicit>
+      <enclosure url="https://github.com/9APE/Podcast/releases/download/news_daily-2026-06-22-t4/news_daily-2026-06-22-t4.mp3" type="audio/mpeg" length="12189614" />
+      <itunes:duration>420</itunes:duration>
+    </item>
+    <item>
+      <title>University of Michigan implants Paradromics wireless brain-computer interface in first human clinical trial - Today's Medical Developments</title>
+      <itunes:title>University of Michigan implants Paradromics wireless brain-computer interface in first human clinical trial - Today's Medical Developments</itunes:title>
+      <description>Today's briefing: University of Michigan implants Paradromics wireless brain-computer interface in first human clinical trial - Today's Medical Developments. Watch on YouTube: https://youtube.com/watch?v=BryZW40vYQA</description>
+      <pubDate>Mon, 22 Jun 2026 11:06:27 +0000</pubDate>
+      <guid>news_daily-2026-06-22-t5</guid>
+      <itunes:episodeType>full</itunes:episodeType>
+      <itunes:episode>5</itunes:episode>
+      <itunes:explicit>false</itunes:explicit>
+      <enclosure url="https://github.com/9APE/Podcast/releases/download/news_daily-2026-06-22-t5/news_daily-2026-06-22-t5.mp3" type="audio/mpeg" length="11331962" />
+      <itunes:duration>420</itunes:duration>
+    </item>
+    <item>
+      <title>Google’s AMIE beats doctors on key simulated disease-management tasks</title>
+      <itunes:title>Google’s AMIE beats doctors on key simulated disease-management tasks</itunes:title>
+      <description>Today's briefing: Google’s AMIE beats doctors on key simulated disease-management tasks. Watch on YouTube: https://youtube.com/watch?v=BAv5_UxGlkk</description>
+      <pubDate>Mon, 22 Jun 2026 11:10:52 +0000</pubDate>
+      <guid>tech_daily-2026-06-22-t1</guid>
+      <itunes:episodeType>full</itunes:episodeType>
+      <itunes:episode>6</itunes:episode>
+      <itunes:explicit>false</itunes:explicit>
+      <enclosure url="https://github.com/9APE/Podcast/releases/download/tech_daily-2026-06-22-t1/tech_daily-2026-06-22-t1.mp3" type="audio/mpeg" length="11898715" />
+      <itunes:duration>420</itunes:duration>
+    </item>
+    <item>
+      <title>Your iPhone Can Now Run 70B AI Models</title>
+      <itunes:title>Your iPhone Can Now Run 70B AI Models</itunes:title>
+      <description>Today's briefing: Your iPhone Can Now Run 70B AI Models. Watch on YouTube: https://youtube.com/watch?v=qscjF1oTRyU</description>
+      <pubDate>Mon, 22 Jun 2026 11:15:23 +0000</pubDate>
+      <guid>tech_daily-2026-06-22-t2</guid>
+      <itunes:episodeType>full</itunes:episodeType>
+      <itunes:episode>7</itunes:episode>
+      <itunes:explicit>false</itunes:explicit>
+      <enclosure url="https://github.com/9APE/Podcast/releases/download/tech_daily-2026-06-22-t2/tech_daily-2026-06-22-t2.mp3" type="audio/mpeg" length="13036609" />
+      <itunes:duration>420</itunes:duration>
+    </item>
+    <item>
+      <title>Quantum Sensor Advance Brings Dark Matter Detection Closer</title>
+      <itunes:title>Quantum Sensor Advance Brings Dark Matter Detection Closer</itunes:title>
+      <description>Today's briefing: Quantum Sensor Advance Brings Dark Matter Detection Closer. Watch on YouTube: https://youtube.com/watch?v=BEXLBJW5ldU</description>
+      <pubDate>Mon, 22 Jun 2026 11:19:25 +0000</pubDate>
+      <guid>tech_daily-2026-06-22-t3</guid>
+      <itunes:episodeType>full</itunes:episodeType>
+      <itunes:episode>8</itunes:episode>
+      <itunes:explicit>false</itunes:explicit>
+      <enclosure url="https://github.com/9APE/Podcast/releases/download/tech_daily-2026-06-22-t3/tech_daily-2026-06-22-t3.mp3" type="audio/mpeg" length="12108739" />
+      <itunes:duration>420</itunes:duration>
     </item>
   </channel>
 </rss>

@@ -1,0 +1,15 @@
+{
+  "episode_id": "news_daily-2026-06-22-t2",
+  "stage": "audio_produced",
+  "topic": {
+    "title": "China hits dozens of US companies with export controls, procurement bans - Nikkei Asia",
+    "url": "https://asia.nikkei.com/economy/trade-war/china-hits-dozens-of-us-companies-with-export-controls-procurement-bans",
+    "summary": "China hits dozens of US companies with export controls, procurement bans - Nikkei Asia\n\nTrade war\n\n# China hits dozens of US companies with export controls, procurement bans\n\nMeasures against drone, rare-earth and other entities signal fresh trade tensions\n\nChinese soldiers hold American and Chinese flags during U.S. President Donald Trump's visit to Beijing on May 14. The two sides have continued",
+    "published_date": "2026-06-22T00:00:00.000Z",
+    "age_hours": "< 24h"
+  },
+  "research_path": "episodes/news_daily-2026-06-22-t2/research.json",
+  "script_path": "episodes/news_daily-2026-06-22-t2/script.txt",
+  "verified_script_path": "episodes/news_daily-2026-06-22-t2/script_verified.txt",
+  "audio_path": "episodes/news_daily-2026-06-22-t2/episode.mp3"
+}
