@@ -44,7 +44,8 @@ jobs:
         run: |
           git config user.name "Podcast Bot"
           git config user.email "bot@podcast.local"
-          git add rss/ seen_topics.db state/ || true
+          # Pull remote changes first, preferring ours on any conflict
+          git pull origin main --no-rebase -X ours
+          git add rss/ seen_topics.db state/ analytics/ || true
           git diff --staged --quiet || git commit -m "Episode $(date +%Y-%m-%d)"
-          git pull --rebase origin main
           git push
