@@ -8,14 +8,30 @@ logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
 # Voice configuration
-# Cartesia Sonic is used when CARTESIA_API_KEY is set — it produces
-# expressive, emotionally natural speech (what NotebookLM clones use).
-# Falls back to OpenAI gpt-4o-mini-tts if Cartesia key is not set.
+# Cartesia Sonic 2 — expressive, emotionally natural speech.
+# Falls back to OpenAI gpt-4o-mini-tts if CARTESIA_API_KEY is not set.
+#
+# Voice IDs: verify/swap at https://play.cartesia.ai/voices
 # ---------------------------------------------------------------------------
 CARTESIA_VOICES = {
-    "ALEX": "a0e99841-438c-4a64-b679-ae501e7d6091",   # Male, confident
-    "SARAH": "694f9389-aac1-45b6-b726-9d9369183238",  # Female, warm
+    "ALEX": "a0e99841-438c-4a64-b679-ae501e7d6091",   # Male, confident/sharp
+    "SARAH": "694f9389-aac1-45b6-b726-9d9369183238",  # Female, warm/expressive
 }
+
+# Emotion + speed profiles per speaker (Cartesia experimental_controls)
+CARTESIA_PROFILES = {
+    "ALEX": {
+        "speed": "normal",
+        "emotion": ["positivity:low", "curiosity:medium"],
+    },
+    "SARAH": {
+        "speed": "normal",
+        "emotion": ["positivity:high", "curiosity:high"],
+    },
+}
+
+# Short-reaction lines (≤6 words) get faster, punchier delivery
+SHORT_REACTION_THRESHOLD = 6
 
 OPENAI_VOICE_CONFIG = {
     "ALEX": {
@@ -84,37 +100,40 @@ class AudioProducer:
             chunks.append(current)
         return chunks if chunks else [text[:max_chars]]
 
+    def _infer_speed(self, text, speaker):
+        """Short reactions get fast delivery; heavy/long lines stay normal."""
+        word_count = len(text.split())
+        if word_count <= SHORT_REACTION_THRESHOLD:
+            return "fast"
+        if any(kw in text.lower() for kw in ["died", "killed", "billion", "million", "war", "crash"]):
+            return "slow"
+        return CARTESIA_PROFILES.get(speaker, CARTESIA_PROFILES["ALEX"])["speed"]
+
     def _tts_cartesia(self, text, speaker, output_path):
-        """Generate TTS using Cartesia Sonic — most expressive option."""
+        """Generate TTS using Cartesia Sonic 2 with emotion + speed controls."""
         voice_id = CARTESIA_VOICES.get(speaker, CARTESIA_VOICES["ALEX"])
+        profile = CARTESIA_PROFILES.get(speaker, CARTESIA_PROFILES["ALEX"])
+        speed = self._infer_speed(text, speaker)
 
-        ws = self._cartesia.tts.websocket()
-        output_format = {
-            "container": "raw",
-            "encoding": "pcm_f32le",
-            "sample_rate": 44100,
-        }
+        data = self._cartesia.tts.bytes(
+            model_id="sonic-2",
+            transcript=text,
+            voice={
+                "id": voice_id,
+                "experimental_controls": {
+                    "speed": speed,
+                    "emotion": profile["emotion"],
+                },
+            },
+            output_format={
+                "container": "mp3",
+                "bit_rate": 128000,
+                "sample_rate": 44100,
+            },
+        )
 
-        pcm_path = Path(str(output_path).replace(".mp3", ".pcm"))
-        with open(pcm_path, "wb") as f:
-            for output in ws.send(
-                model_id="sonic-english",
-                transcript=text,
-                voice_id=voice_id,
-                stream=True,
-                output_format=output_format,
-            ):
-                f.write(output["audio"])
-        ws.close()
-
-        # Convert raw PCM to MP3
-        subprocess.run([
-            "ffmpeg", "-y",
-            "-f", "f32le", "-ar", "44100", "-ac", "1",
-            "-i", str(pcm_path),
-            "-b:a", "128k", str(output_path)
-        ], check=True, capture_output=True)
-        pcm_path.unlink(missing_ok=True)
+        with open(output_path, "wb") as f:
+            f.write(data)
 
     def _tts_openai(self, text, speaker, output_path):
         """Fallback TTS using OpenAI gpt-4o-mini-tts with personality instructions."""
