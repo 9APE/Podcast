@@ -1,0 +1,13 @@
+{
+  "episode_id": "news_daily-2026-06-23-t2",
+  "stage": "fact_checked",
+  "topic": {
+    "title": "**Giannis Antetokounmpo TRADED to Miami Heat in SHOCKING NBA Blockbuster Deal**",
+    "url": "",
+    "summary": "",
+    "search_query": "**Giannis Antetokounmpo TRADED to Miami Heat in SHOCKING NBA Blockbuster Deal**"
+  },
+  "research_path": "episodes/news_daily-2026-06-23-t2/research.json",
+  "script_path": "episodes/news_daily-2026-06-23-t2/script.txt",
+  "verified_script_path": "episodes/news_daily-2026-06-23-t2/script_verified.txt"
+}

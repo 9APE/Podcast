@@ -1,0 +1,13 @@
+{
+  "episode_id": "news_daily-2026-06-23-t3",
+  "stage": "fact_checked",
+  "topic": {
+    "title": "**Mbappe's France DOMINATES Iraq in Craziest World Cup 2026 Moment (Lightning Delay)**",
+    "url": "",
+    "summary": "",
+    "search_query": "**Mbappe's France DOMINATES Iraq in Craziest World Cup 2026 Moment (Lightning Delay)**"
+  },
+  "research_path": "episodes/news_daily-2026-06-23-t3/research.json",
+  "script_path": "episodes/news_daily-2026-06-23-t3/script.txt",
+  "verified_script_path": "episodes/news_daily-2026-06-23-t3/script_verified.txt"
+}

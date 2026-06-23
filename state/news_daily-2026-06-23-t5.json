@@ -1,0 +1,13 @@
+{
+  "episode_id": "news_daily-2026-06-23-t5",
+  "stage": "fact_checked",
+  "topic": {
+    "title": "**Missing Woman's Ransom Note Just Revealed - Nancy Guthrie Case Update**",
+    "url": "",
+    "summary": "",
+    "search_query": "**Missing Woman's Ransom Note Just Revealed - Nancy Guthrie Case Update**"
+  },
+  "research_path": "episodes/news_daily-2026-06-23-t5/research.json",
+  "script_path": "episodes/news_daily-2026-06-23-t5/script.txt",
+  "verified_script_path": "episodes/news_daily-2026-06-23-t5/script_verified.txt"
+}

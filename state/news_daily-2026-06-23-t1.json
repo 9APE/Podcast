@@ -1,0 +1,13 @@
+{
+  "episode_id": "news_daily-2026-06-23-t1",
+  "stage": "fact_checked",
+  "topic": {
+    "title": "**Why Britain's PM Just Resigned & Trump Is Threatening Iran Over Secret Talks**",
+    "url": "",
+    "summary": "",
+    "search_query": "**Why Britain's PM Just Resigned & Trump Is Threatening Iran Over Secret Talks**"
+  },
+  "research_path": "episodes/news_daily-2026-06-23-t1/research.json",
+  "script_path": "episodes/news_daily-2026-06-23-t1/script.txt",
+  "verified_script_path": "episodes/news_daily-2026-06-23-t1/script_verified.txt"
+}
