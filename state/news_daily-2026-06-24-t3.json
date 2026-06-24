@@ -1,0 +1,13 @@
+{
+  "episode_id": "news_daily-2026-06-24-t3",
+  "stage": "fact_checked",
+  "topic": {
+    "title": "**Bill Gates Reveals Jeffrey Epstein's SHOCKING Blackmail Plot Against Him**",
+    "url": "",
+    "summary": "",
+    "search_query": "**Bill Gates Reveals Jeffrey Epstein's SHOCKING Blackmail Plot Against Him**"
+  },
+  "research_path": "episodes/news_daily-2026-06-24-t3/research.json",
+  "script_path": "episodes/news_daily-2026-06-24-t3/script.txt",
+  "verified_script_path": "episodes/news_daily-2026-06-24-t3/script_verified.txt"
+}

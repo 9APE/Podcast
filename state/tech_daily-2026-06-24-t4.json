@@ -1,0 +1,14 @@
+{
+  "episode_id": "tech_daily-2026-06-24-t4",
+  "stage": "fact_checked",
+  "topic": {
+    "title": "Human Memory Limits Make AI Better at Grammar - Neuroscience News",
+    "url": "https://neurosciencenews.com/ai-fleeting-memory-language-learning-30946/",
+    "summary": "Human Memory Limits Make AI Better at Grammar - Neuroscience News\n\nBy introducing a human-like memory decay mechanism alongside a 3-to-7 word echoic buffer, the \"fleeting memory\" Transformer, forces neural networks to prioritize abstract grammatical structures over literal text memorization. Credit: Neuroscience News\n\nSummary: Artificial intelligence language models typically rely on massive, unco",
+    "published_date": "2026-06-23T19:50:13.000Z",
+    "age_hours": "< 24h"
+  },
+  "research_path": "episodes/tech_daily-2026-06-24-t4/research.json",
+  "script_path": "episodes/tech_daily-2026-06-24-t4/script.txt",
+  "verified_script_path": "episodes/tech_daily-2026-06-24-t4/script_verified.txt"
+}

@@ -1,0 +1,14 @@
+{
+  "episode_id": "tech_daily-2026-06-24-t5",
+  "stage": "fact_checked",
+  "topic": {
+    "title": "KAIST develops robot AI model capable of precision assembly with minimal training data - The Herald Business",
+    "url": "https://biz.heraldcorp.com/article/10785916",
+    "summary": "# KAIST develops robot AI model capable of precision assembly with minimal training data - The Herald Business\n\nAuthor: Koo Bon-hyuk\nPublished: 2026-06-24T08:19:32+09:00\nSource: biz.heraldcorp.com (biz.heraldcorp.com)\nLanguage: en\n\n## Story\n\nKAIST develops robot AI model capable of precision assembly with minimal training data - The Herald Business\n\n[THE HERALD BUSINESS](https://biz.heraldcorp.com",
+    "published_date": "2026-06-23T23:19:32.000Z",
+    "age_hours": "< 24h"
+  },
+  "research_path": "episodes/tech_daily-2026-06-24-t5/research.json",
+  "script_path": "episodes/tech_daily-2026-06-24-t5/script.txt",
+  "verified_script_path": "episodes/tech_daily-2026-06-24-t5/script_verified.txt"
+}

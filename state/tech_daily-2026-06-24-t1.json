@@ -1,0 +1,14 @@
+{
+  "episode_id": "tech_daily-2026-06-24-t1",
+  "stage": "fact_checked",
+  "topic": {
+    "title": "Anthropic\u2019s Mythos model found vulnerabilities in classified US government systems, official says | Science News | thecanadianpressnews.ca",
+    "url": "https://www.thecanadianpressnews.ca/science/anthropic-s-mythos-model-found-vulnerabilities-in-classified-us-government-systems-official-says/article_8f5a5e79-10d5-5ca4-964b-d50d1ae36b56.html",
+    "summary": "Anthropic\u2019s Mythos model found vulnerabilities in classified US government systems, official says | Science News | thecanadianpressnews.ca\n\nYou have permission to edit this article.\n\nEdit\n\nSearch\n\n[+] Add The Canadian Press as a preferred source on Google\n\nWASHINGTON (AP) \u2014 A U.S. official told The Associated Press on Tuesday that one of Anthropic's artificial intelligence models had identified vu",
+    "published_date": "2026-06-24T00:00:00.000Z",
+    "age_hours": "< 24h"
+  },
+  "research_path": "episodes/tech_daily-2026-06-24-t1/research.json",
+  "script_path": "episodes/tech_daily-2026-06-24-t1/script.txt",
+  "verified_script_path": "episodes/tech_daily-2026-06-24-t1/script_verified.txt"
+}

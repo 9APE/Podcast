@@ -1,0 +1,13 @@
+{
+  "episode_id": "news_daily-2026-06-24-t5",
+  "stage": "fact_checked",
+  "topic": {
+    "title": "**Kim Jong Un's 5,000-Ton Nuclear Destroyer Just Changed Everything**",
+    "url": "",
+    "summary": "",
+    "search_query": "**Kim Jong Un's 5,000-Ton Nuclear Destroyer Just Changed Everything**"
+  },
+  "research_path": "episodes/news_daily-2026-06-24-t5/research.json",
+  "script_path": "episodes/news_daily-2026-06-24-t5/script.txt",
+  "verified_script_path": "episodes/news_daily-2026-06-24-t5/script_verified.txt"
+}

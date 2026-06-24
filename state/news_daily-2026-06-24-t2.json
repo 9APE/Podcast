@@ -1,0 +1,13 @@
+{
+  "episode_id": "news_daily-2026-06-24-t2",
+  "stage": "fact_checked",
+  "topic": {
+    "title": "**Meta's NEW AI Smart Glasses Are Actually Affordable (And They're Insane)**",
+    "url": "",
+    "summary": "",
+    "search_query": "**Meta's NEW AI Smart Glasses Are Actually Affordable (And They're Insane)**"
+  },
+  "research_path": "episodes/news_daily-2026-06-24-t2/research.json",
+  "script_path": "episodes/news_daily-2026-06-24-t2/script.txt",
+  "verified_script_path": "episodes/news_daily-2026-06-24-t2/script_verified.txt"
+}
