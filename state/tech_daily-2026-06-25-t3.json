@@ -1,0 +1,14 @@
+{
+  "episode_id": "tech_daily-2026-06-25-t3",
+  "stage": "fact_checked",
+  "topic": {
+    "title": "ByteDance Seedance 2.5: Native 30-Second AI Video, No Stitching Required",
+    "url": "https://www.techtimes.com/articles/318975/20260624/bytedance-seedance-25-native-30-second-ai-video-no-stitching-required.htm",
+    "summary": "ByteDance Seedance 2.5: Native 30-Second AI Video, No Stitching Required\n\nBytedance.com\n\nByteDance raised the ceiling on AI video generation Tuesday when it announced Seedance 2.5 at the Volcano Engine FORCE conference in Beijing \u2014 a model that, the company claims, can generate a single continuous 30-second clip without stitching shorter segments together. If those claims survive independent testi",
+    "published_date": "2026-06-24T00:00:00.000Z",
+    "age_hours": "< 24h"
+  },
+  "research_path": "episodes/tech_daily-2026-06-25-t3/research.json",
+  "script_path": "episodes/tech_daily-2026-06-25-t3/script.txt",
+  "verified_script_path": "episodes/tech_daily-2026-06-25-t3/script_verified.txt"
+}

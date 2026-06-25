@@ -1,0 +1,13 @@
+{
+  "episode_id": "news_daily-2026-06-25-t3",
+  "stage": "fact_checked",
+  "topic": {
+    "title": "**GTA 6 Cover Art Finally Revealed - Here's What We Know**",
+    "url": "",
+    "summary": "",
+    "search_query": "**GTA 6 Cover Art Finally Revealed - Here's What We Know**"
+  },
+  "research_path": "episodes/news_daily-2026-06-25-t3/research.json",
+  "script_path": "episodes/news_daily-2026-06-25-t3/script.txt",
+  "verified_script_path": "episodes/news_daily-2026-06-25-t3/script_verified.txt"
+}

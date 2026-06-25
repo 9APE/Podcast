@@ -1,0 +1,13 @@
+{
+  "episode_id": "news_daily-2026-06-25-t5",
+  "stage": "fact_checked",
+  "topic": {
+    "title": "**Iran Nuclear Deal: What the UN Chief Just Announced**",
+    "url": "",
+    "summary": "",
+    "search_query": "**Iran Nuclear Deal: What the UN Chief Just Announced**"
+  },
+  "research_path": "episodes/news_daily-2026-06-25-t5/research.json",
+  "script_path": "episodes/news_daily-2026-06-25-t5/script.txt",
+  "verified_script_path": "episodes/news_daily-2026-06-25-t5/script_verified.txt"
+}

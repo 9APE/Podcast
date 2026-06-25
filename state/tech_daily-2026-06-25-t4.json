@@ -1,0 +1,14 @@
+{
+  "episode_id": "tech_daily-2026-06-25-t4",
+  "stage": "fact_checked",
+  "topic": {
+    "title": "The World's First Nuclear Clocks Are Ticking, Opening a New Way to Investigate Dark Matter and Other Mysteries of Physics",
+    "url": "https://www.smithsonianmag.com/smart-news/the-worlds-first-nuclear-clocks-are-ticking-opening-a-new-way-to-investigate-dark-matter-and-other-mysteries-of-physics-180989002/",
+    "summary": "The World's First Nuclear Clocks Are Ticking, Opening a New Way to Investigate Dark Matter and Other Mysteries of Physics Skip to main content\n\nCrystal containing thorium-229 atoms used in the European team's clock TU Wien\n\nFor decades, scientists have tried to build a device even more precise than an atomic clock, which keeps time using electrons, the negatively charged particles that whiz around",
+    "published_date": "2026-06-24T00:00:00.000Z",
+    "age_hours": "< 24h"
+  },
+  "research_path": "episodes/tech_daily-2026-06-25-t4/research.json",
+  "script_path": "episodes/tech_daily-2026-06-25-t4/script.txt",
+  "verified_script_path": "episodes/tech_daily-2026-06-25-t4/script_verified.txt"
+}

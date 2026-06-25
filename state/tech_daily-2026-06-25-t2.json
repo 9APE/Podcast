@@ -1,0 +1,14 @@
+{
+  "episode_id": "tech_daily-2026-06-25-t2",
+  "stage": "fact_checked",
+  "topic": {
+    "title": "OpenAI and Broadcom unveil LLM-optimized inference chip | OpenAI",
+    "url": "https://openai.com/index/openai-broadcom-jalapeno-inference-chip/",
+    "summary": "# OpenAI and Broadcom unveil LLM-optimized inference chip | OpenAI\n\nPublished: 2026-06-24T13:05:15+00:00\nSource: openai.com (openai.com)\nLanguage: en\n\n## Story\n\nOpenAI and Broadcom unveil LLM-optimized inference chip | OpenAI\n\nSkip to main content\n\n[OpenAI Home](https://openai.com/)\n\n- [Research](https://openai.com/research/index/)\n- Products\n- [Business](https://openai.com/business/)\n- [Developer",
+    "published_date": "2026-06-24T13:05:15.000Z",
+    "age_hours": "< 24h"
+  },
+  "research_path": "episodes/tech_daily-2026-06-25-t2/research.json",
+  "script_path": "episodes/tech_daily-2026-06-25-t2/script.txt",
+  "verified_script_path": "episodes/tech_daily-2026-06-25-t2/script_verified.txt"
+}

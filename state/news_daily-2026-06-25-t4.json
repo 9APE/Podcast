@@ -1,0 +1,13 @@
+{
+  "episode_id": "news_daily-2026-06-25-t4",
+  "stage": "fact_checked",
+  "topic": {
+    "title": "**Trump STOPS Housing Bill - The SAVE Act Demands Explained**",
+    "url": "",
+    "summary": "",
+    "search_query": "**Trump STOPS Housing Bill - The SAVE Act Demands Explained**"
+  },
+  "research_path": "episodes/news_daily-2026-06-25-t4/research.json",
+  "script_path": "episodes/news_daily-2026-06-25-t4/script.txt",
+  "verified_script_path": "episodes/news_daily-2026-06-25-t4/script_verified.txt"
+}

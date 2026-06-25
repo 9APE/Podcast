@@ -1,0 +1,13 @@
+{
+  "episode_id": "news_daily-2026-06-25-t1",
+  "stage": "fact_checked",
+  "topic": {
+    "title": "**FIFA World Cup 2026 is BREAKING the Internet - Here's Why**",
+    "url": "",
+    "summary": "",
+    "search_query": "**FIFA World Cup 2026 is BREAKING the Internet - Here's Why**"
+  },
+  "research_path": "episodes/news_daily-2026-06-25-t1/research.json",
+  "script_path": "episodes/news_daily-2026-06-25-t1/script.txt",
+  "verified_script_path": "episodes/news_daily-2026-06-25-t1/script_verified.txt"
+}
