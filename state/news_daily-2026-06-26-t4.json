@@ -1,0 +1,13 @@
+{
+  "episode_id": "news_daily-2026-06-26-t4",
+  "stage": "fact_checked",
+  "topic": {
+    "title": "**Supreme Court Makes SHOCKING Decision on Trump's Immigration Policy**",
+    "url": "",
+    "summary": "",
+    "search_query": "**Supreme Court Makes SHOCKING Decision on Trump's Immigration Policy**"
+  },
+  "research_path": "episodes/news_daily-2026-06-26-t4/research.json",
+  "script_path": "episodes/news_daily-2026-06-26-t4/script.txt",
+  "verified_script_path": "episodes/news_daily-2026-06-26-t4/script_verified.txt"
+}

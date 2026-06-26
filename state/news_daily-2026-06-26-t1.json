@@ -1,0 +1,13 @@
+{
+  "episode_id": "news_daily-2026-06-26-t1",
+  "stage": "fact_checked",
+  "topic": {
+    "title": "**MASSIVE EARTHQUAKES Hit Venezuela, US, and Japan - Hundreds Dead**",
+    "url": "",
+    "summary": "",
+    "search_query": "**MASSIVE EARTHQUAKES Hit Venezuela, US, and Japan - Hundreds Dead**"
+  },
+  "research_path": "episodes/news_daily-2026-06-26-t1/research.json",
+  "script_path": "episodes/news_daily-2026-06-26-t1/script.txt",
+  "verified_script_path": "episodes/news_daily-2026-06-26-t1/script_verified.txt"
+}

@@ -106,5 +106,41 @@
       <enclosure url="https://github.com/9APE/Podcast/releases/download/tech_daily-2026-06-22-t3/tech_daily-2026-06-22-t3.mp3" type="audio/mpeg" length="12108739" />
       <itunes:duration>420</itunes:duration>
     </item>
+    <item>
+      <title>IBM Debuts World's First Sub-1 Nanometer Chip Technology</title>
+      <itunes:title>IBM Debuts World's First Sub-1 Nanometer Chip Technology</itunes:title>
+      <description>Today's briefing: IBM Debuts World's First Sub-1 Nanometer Chip Technology. Watch on YouTube: https://youtube.com/watch?v=dS7oTiACHRE</description>
+      <pubDate>Fri, 26 Jun 2026 08:46:02 +0000</pubDate>
+      <guid>tech_daily-2026-06-26-t1</guid>
+      <itunes:episodeType>full</itunes:episodeType>
+      <itunes:episode>9</itunes:episode>
+      <itunes:explicit>false</itunes:explicit>
+      <enclosure url="https://github.com/9APE/Podcast/releases/download/tech_daily-2026-06-26-t1/tech_daily-2026-06-26-t1.mp3" type="audio/mpeg" length="11925673" />
+      <itunes:duration>420</itunes:duration>
+    </item>
+    <item>
+      <title>Unconventional AI releases its first model, built on an oscillator architecture that could cut AI power use by 1000x</title>
+      <itunes:title>Unconventional AI releases its first model, built on an oscillator architecture that could cut AI power use by 1000x</itunes:title>
+      <description>Today's briefing: Unconventional AI releases its first model, built on an oscillator architecture that could cut AI power use by 1000x. Watch on YouTube: https://youtube.com/watch?v=QlG74AIZRAA</description>
+      <pubDate>Fri, 26 Jun 2026 08:50:57 +0000</pubDate>
+      <guid>tech_daily-2026-06-26-t2</guid>
+      <itunes:episodeType>full</itunes:episodeType>
+      <itunes:episode>10</itunes:episode>
+      <itunes:explicit>false</itunes:explicit>
+      <enclosure url="https://github.com/9APE/Podcast/releases/download/tech_daily-2026-06-26-t2/tech_daily-2026-06-26-t2.mp3" type="audio/mpeg" length="10844831" />
+      <itunes:duration>420</itunes:duration>
+    </item>
+    <item>
+      <title>Perseverance Scratches the Martian Surface, Finds Organic Carbon</title>
+      <itunes:title>Perseverance Scratches the Martian Surface, Finds Organic Carbon</itunes:title>
+      <description>Today's briefing: Perseverance Scratches the Martian Surface, Finds Organic Carbon. Watch on YouTube: https://youtube.com/watch?v=QISQv-AZkAk</description>
+      <pubDate>Fri, 26 Jun 2026 08:56:01 +0000</pubDate>
+      <guid>tech_daily-2026-06-26-t3</guid>
+      <itunes:episodeType>full</itunes:episodeType>
+      <itunes:episode>11</itunes:episode>
+      <itunes:explicit>false</itunes:explicit>
+      <enclosure url="https://github.com/9APE/Podcast/releases/download/tech_daily-2026-06-26-t3/tech_daily-2026-06-26-t3.mp3" type="audio/mpeg" length="9824801" />
+      <itunes:duration>420</itunes:duration>
+    </item>
   </channel>
 </rss>

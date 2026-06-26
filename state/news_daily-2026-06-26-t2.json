@@ -1,0 +1,13 @@
+{
+  "episode_id": "news_daily-2026-06-26-t2",
+  "stage": "fact_checked",
+  "topic": {
+    "title": "**Ukraine Launches DOZENS of Drones at Moscow in Shocking Attack**",
+    "url": "",
+    "summary": "",
+    "search_query": "**Ukraine Launches DOZENS of Drones at Moscow in Shocking Attack**"
+  },
+  "research_path": "episodes/news_daily-2026-06-26-t2/research.json",
+  "script_path": "episodes/news_daily-2026-06-26-t2/script.txt",
+  "verified_script_path": "episodes/news_daily-2026-06-26-t2/script_verified.txt"
+}

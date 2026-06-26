@@ -1,18 +1,18 @@
 {
-  "seo_title_format": "f\"{topic_title} | Tech Pod Daily\"",
-  "description_hook": "If this episode sparked your curiosity, leave us a rating \u2014 it helps more people discover the show.",
+  "seo_title_format": "f\"{topic_title} | The Tech Pod\"",
+  "description_hook": "If you enjoyed this episode, leave us a rating \u2014 it only takes a second and helps more people find the show.",
   "preferred_topic_keywords": [
     "AI",
-    "quantum",
-    "Apple",
-    "Google",
-    "machine learning"
+    "technology",
+    "science",
+    "viral tech",
+    "breaking tech news"
   ],
   "avoid_topic_keywords": [],
   "episode_length_recommendation": 7,
-  "script_improvement": "End every episode by teasing the next topic and explicitly asking listeners to leave a rating on Spotify to help the show grow.",
-  "summary": "No real listener data is available yet, so recommendations are based entirely on Spotify best practices rather than performance trends. Defaults are set to encourage early growth through SEO-friendly titles, ratings CTAs, and topic consistency around AI, quantum, and big tech.",
-  "generated_at": "2026-06-22T11:28:46.570442",
+  "script_improvement": "At both the opening and closing of each episode, explicitly ask listeners to follow the show and leave a rating on Spotify.",
+  "summary": "No episodes have been published yet, so there is no performance data to act on. Recommendations are based entirely on Spotify best practices for a new technology and AI podcast in its launch phase.",
+  "generated_at": "2026-06-26T09:00:30.033084",
   "channel_id": "tech_daily",
   "had_spotify_data": true
 }

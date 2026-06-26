@@ -1,0 +1,21 @@
+{
+  "episode_id": "tech_daily-2026-06-26-t2",
+  "stage": "shorts_published",
+  "topic": {
+    "title": "Unconventional AI releases its first model, built on an oscillator architecture that could cut AI power use by 1000x",
+    "url": "https://thenextweb.com/news/unconventional-ai-un0-oscillator-chip-image-generation-naveen-rao",
+    "summary": "Unconventional AI releases its first model, built on an oscillator architecture that could cut AI power use by 1000x\n\nImage by: Unconventional AI / LinkedIn\n\n#### TL;DR\n\nUnconventional AI released Un-0, an image generation model on a simulated oscillator architecture that founder Naveen Rao says could cut AI power 1000x.\n\nUnconventional AI, the startup founded by former Databricks AI chief Naveen ",
+    "published_date": "2026-06-25T17:09:37.000Z",
+    "age_hours": "< 24h"
+  },
+  "research_path": "episodes/tech_daily-2026-06-26-t2/research.json",
+  "script_path": "episodes/tech_daily-2026-06-26-t2/script.txt",
+  "verified_script_path": "episodes/tech_daily-2026-06-26-t2/script_verified.txt",
+  "audio_path": "episodes/tech_daily-2026-06-26-t2/episode.mp3",
+  "youtube_url": "https://youtube.com/watch?v=QlG74AIZRAA",
+  "rss_url": "https://9ape.github.io/Podcast/rss/feed.xml",
+  "short_urls": [
+    "https://www.youtube.com/shorts/dkncPIOfAY0",
+    "https://www.youtube.com/shorts/l5niQZ1JLRU"
+  ]
+}
