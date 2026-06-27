@@ -1,0 +1,13 @@
+{
+  "episode_id": "news_daily-2026-06-27-t1",
+  "stage": "fact_checked",
+  "topic": {
+    "title": "**Turkey STUNS USA in World Cup Thriller - Kaan Ayhan's Stoppage Time Goal Changes EVERYTHING**",
+    "url": "",
+    "summary": "",
+    "search_query": "**Turkey STUNS USA in World Cup Thriller - Kaan Ayhan's Stoppage Time Goal Changes EVERYTHING**"
+  },
+  "research_path": "episodes/news_daily-2026-06-27-t1/research.json",
+  "script_path": "episodes/news_daily-2026-06-27-t1/script.txt",
+  "verified_script_path": "episodes/news_daily-2026-06-27-t1/script_verified.txt"
+}

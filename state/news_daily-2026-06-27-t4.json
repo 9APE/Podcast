@@ -1,0 +1,13 @@
+{
+  "episode_id": "news_daily-2026-06-27-t4",
+  "stage": "fact_checked",
+  "topic": {
+    "title": "**Trump's Iran Attack Sparks Congressional Fury - Is This an Illegal War?**",
+    "url": "",
+    "summary": "",
+    "search_query": "**Trump's Iran Attack Sparks Congressional Fury - Is This an Illegal War?**"
+  },
+  "research_path": "episodes/news_daily-2026-06-27-t4/research.json",
+  "script_path": "episodes/news_daily-2026-06-27-t4/script.txt",
+  "verified_script_path": "episodes/news_daily-2026-06-27-t4/script_verified.txt"
+}

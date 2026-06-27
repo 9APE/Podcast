@@ -1,0 +1,13 @@
+{
+  "episode_id": "news_daily-2026-06-27-t5",
+  "stage": "fact_checked",
+  "topic": {
+    "title": "**JD Vance's Nixon Defense Goes VIRAL For All The Wrong Reasons**",
+    "url": "",
+    "summary": "",
+    "search_query": "**JD Vance's Nixon Defense Goes VIRAL For All The Wrong Reasons**"
+  },
+  "research_path": "episodes/news_daily-2026-06-27-t5/research.json",
+  "script_path": "episodes/news_daily-2026-06-27-t5/script.txt",
+  "verified_script_path": "episodes/news_daily-2026-06-27-t5/script_verified.txt"
+}

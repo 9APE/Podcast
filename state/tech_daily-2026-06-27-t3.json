@@ -1,0 +1,14 @@
+{
+  "episode_id": "tech_daily-2026-06-27-t3",
+  "stage": "fact_checked",
+  "topic": {
+    "title": "NASA's TESS Spacecraft Finds Two 'Cotton Candy' Planets In One System",
+    "url": "https://www.engadget.com/2202239/nasa-tess-cotton-candy-planet-discovery/",
+    "summary": "NASA's TESS Spacecraft Finds Two 'Cotton Candy' Planets In One System\n\n# NASA's TESS spacecraft finds two 'cotton candy' planets in one system\n\nThese super puffy planets are very rare.\n\nBy Mariella Moon June 26, 2026 7:09 am EST\n\nNASA / Daniel Rutter\n\nNASA's Transiting Exoplanet Survey Satellite or TESS has found what NASA calls the two \"puffiest\" worlds ever found. While they're as big as our gas",
+    "published_date": "2026-06-26T11:09:10.000Z",
+    "age_hours": "< 24h"
+  },
+  "research_path": "episodes/tech_daily-2026-06-27-t3/research.json",
+  "script_path": "episodes/tech_daily-2026-06-27-t3/script.txt",
+  "verified_script_path": "episodes/tech_daily-2026-06-27-t3/script_verified.txt"
+}

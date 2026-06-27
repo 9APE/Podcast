@@ -1,0 +1,13 @@
+{
+  "episode_id": "news_daily-2026-06-27-t2",
+  "stage": "fact_checked",
+  "topic": {
+    "title": "**US Launches Retaliatory Strikes on Iran - Here's What Happened**",
+    "url": "",
+    "summary": "",
+    "search_query": "**US Launches Retaliatory Strikes on Iran - Here's What Happened**"
+  },
+  "research_path": "episodes/news_daily-2026-06-27-t2/research.json",
+  "script_path": "episodes/news_daily-2026-06-27-t2/script.txt",
+  "verified_script_path": "episodes/news_daily-2026-06-27-t2/script_verified.txt"
+}

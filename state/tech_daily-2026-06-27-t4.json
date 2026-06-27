@@ -1,0 +1,14 @@
+{
+  "episode_id": "tech_daily-2026-06-27-t4",
+  "stage": "fact_checked",
+  "topic": {
+    "title": "NVIDIA AI Trained Itself on a 30B Model: Corrected Its Own Broken Metric Mid-Run",
+    "url": "https://www.techtimes.com/articles/319123/20260626/nvidia-ai-trained-itself-30b-model-corrected-its-own-broken-metric-mid-run.htm",
+    "summary": "NVIDIA AI Trained Itself on a 30B Model: Corrected Its Own Broken Metric Mid-Run\n\nstore.steampowered.com\n\nAn autonomous AI system built by researchers at Amazon's A-EVO-Lab completed a full post-training run on a 30 billion parameter NVIDIA Nemotron model \u2014 with no human in the loop, across four rounds running over multiple weeks \u2014 and then did something its designers had not planned for: it detec",
+    "published_date": "2026-06-26T11:15:07.000Z",
+    "age_hours": "< 24h"
+  },
+  "research_path": "episodes/tech_daily-2026-06-27-t4/research.json",
+  "script_path": "episodes/tech_daily-2026-06-27-t4/script.txt",
+  "verified_script_path": "episodes/tech_daily-2026-06-27-t4/script_verified.txt"
+}
