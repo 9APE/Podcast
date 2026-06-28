@@ -1,0 +1,14 @@
+{
+  "episode_id": "tech_daily-2026-06-28-t2",
+  "stage": "fact_checked",
+  "topic": {
+    "title": "DeepReinforce ships Ornith-1.0, a coding model that writes its own RL scaffolds \u2014 AI Insiders",
+    "url": "https://aiinsiders.net/article/deepreinforce-ships-ornith-10-a-coding-model-that-writes",
+    "summary": "DeepReinforce ships Ornith-1.0, a coding model that writes its own RL scaffolds \u2014 AI Insiders\n\nHome/ Models/ DeepReinforce ships Ornith-1.0, a coding model t\u2026\n\nMODELS\n\n# DeepReinforce ships Ornith-1.0, a coding model that writes its own RL scaffolds\n\nThe open-weight family runs from a 9B edge variant to a 397B flagship and claims benchmark parity with Claude Opus 4.7, according to DeepReinforce.\n\n",
+    "published_date": "2026-06-27T12:00:00.000Z",
+    "age_hours": "< 24h"
+  },
+  "research_path": "episodes/tech_daily-2026-06-28-t2/research.json",
+  "script_path": "episodes/tech_daily-2026-06-28-t2/script.txt",
+  "verified_script_path": "episodes/tech_daily-2026-06-28-t2/script_verified.txt"
+}

@@ -1,0 +1,13 @@
+{
+  "episode_id": "news_daily-2026-06-28-t1",
+  "stage": "fact_checked",
+  "topic": {
+    "title": "**US Strikes Iran After Tanker Attack - Trump Orders Second Wave as Middle East Tensions Explode**",
+    "url": "",
+    "summary": "",
+    "search_query": "**US Strikes Iran After Tanker Attack - Trump Orders Second Wave as Middle East Tensions Explode**"
+  },
+  "research_path": "episodes/news_daily-2026-06-28-t1/research.json",
+  "script_path": "episodes/news_daily-2026-06-28-t1/script.txt",
+  "verified_script_path": "episodes/news_daily-2026-06-28-t1/script_verified.txt"
+}

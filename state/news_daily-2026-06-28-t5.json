@@ -1,0 +1,13 @@
+{
+  "episode_id": "news_daily-2026-06-28-t5",
+  "stage": "fact_checked",
+  "topic": {
+    "title": "**Prada Under Fire for New Ambassador's Israel-Erasing Necklace - Brand Faces Massive Backlash**",
+    "url": "",
+    "summary": "",
+    "search_query": "**Prada Under Fire for New Ambassador's Israel-Erasing Necklace - Brand Faces Massive Backlash**"
+  },
+  "research_path": "episodes/news_daily-2026-06-28-t5/research.json",
+  "script_path": "episodes/news_daily-2026-06-28-t5/script.txt",
+  "verified_script_path": "episodes/news_daily-2026-06-28-t5/script_verified.txt"
+}

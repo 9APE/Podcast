@@ -1,0 +1,13 @@
+{
+  "episode_id": "news_daily-2026-06-28-t2",
+  "stage": "fact_checked",
+  "topic": {
+    "title": "**Tom Holland CONFIRMS Marriage to Zendaya - Hollywood's Biggest Secret Finally Revealed**",
+    "url": "",
+    "summary": "",
+    "search_query": "**Tom Holland CONFIRMS Marriage to Zendaya - Hollywood's Biggest Secret Finally Revealed**"
+  },
+  "research_path": "episodes/news_daily-2026-06-28-t2/research.json",
+  "script_path": "episodes/news_daily-2026-06-28-t2/script.txt",
+  "verified_script_path": "episodes/news_daily-2026-06-28-t2/script_verified.txt"
+}

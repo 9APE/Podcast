@@ -1,0 +1,14 @@
+{
+  "episode_id": "tech_daily-2026-06-28-t3",
+  "stage": "fact_checked",
+  "topic": {
+    "title": "NASA's Perseverance discovers a rich cache of organic molecules on Mars, suggesting the building blocks of life were widespread on the ancient Red Planet - The Economic Times",
+    "url": "https://economictimes.indiatimes.com/us/science-tech/life-on-mars-nasa-rover-finds-organic-molecules-on-the-red-planet/articleshow/132045871.cms",
+    "summary": "# NASA's Perseverance discovers a rich cache of organic molecules on Mars, suggesting the building blocks of life were widespread on the ancient Red Planet - The Economic Times\n\nPublished: 2026-06-28T10:48:00+05:30\nSource: economictimes.indiatimes.com (economictimes.indiatimes.com)\nLanguage: en\n\n## Story\n\nNASA's Perseverance discovers a rich cache of organic molecules on Mars, suggesting the build",
+    "published_date": "2026-06-28T05:18:00.000Z",
+    "age_hours": "< 24h"
+  },
+  "research_path": "episodes/tech_daily-2026-06-28-t3/research.json",
+  "script_path": "episodes/tech_daily-2026-06-28-t3/script.txt",
+  "verified_script_path": "episodes/tech_daily-2026-06-28-t3/script_verified.txt"
+}

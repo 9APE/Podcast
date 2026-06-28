@@ -1,0 +1,13 @@
+{
+  "episode_id": "news_daily-2026-06-28-t3",
+  "stage": "fact_checked",
+  "topic": {
+    "title": "**Shakira & Burna Boy's 'Dai Dai' Hits #1 Globally While Oliver Tree's Death Shocks YouTube**",
+    "url": "",
+    "summary": "",
+    "search_query": "**Shakira & Burna Boy's 'Dai Dai' Hits #1 Globally While Oliver Tree's Death Shocks YouTube**"
+  },
+  "research_path": "episodes/news_daily-2026-06-28-t3/research.json",
+  "script_path": "episodes/news_daily-2026-06-28-t3/script.txt",
+  "verified_script_path": "episodes/news_daily-2026-06-28-t3/script_verified.txt"
+}
