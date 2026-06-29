@@ -1,0 +1,13 @@
+{
+  "episode_id": "news_daily-2026-06-29-t2",
+  "stage": "fact_checked",
+  "topic": {
+    "title": "**US and Iran Exchange Massive Military Strikes - War Escalates**",
+    "url": "",
+    "summary": "",
+    "search_query": "**US and Iran Exchange Massive Military Strikes - War Escalates**"
+  },
+  "research_path": "episodes/news_daily-2026-06-29-t2/research.json",
+  "script_path": "episodes/news_daily-2026-06-29-t2/script.txt",
+  "verified_script_path": "episodes/news_daily-2026-06-29-t2/script_verified.txt"
+}

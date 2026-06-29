@@ -1,0 +1,13 @@
+{
+  "episode_id": "news_daily-2026-06-29-t4",
+  "stage": "fact_checked",
+  "topic": {
+    "title": "**Mark Zuckerberg's Meta Hackathon FAILS Spectacularly - AI Destroys Company Culture**",
+    "url": "",
+    "summary": "",
+    "search_query": "**Mark Zuckerberg's Meta Hackathon FAILS Spectacularly - AI Destroys Company Culture**"
+  },
+  "research_path": "episodes/news_daily-2026-06-29-t4/research.json",
+  "script_path": "episodes/news_daily-2026-06-29-t4/script.txt",
+  "verified_script_path": "episodes/news_daily-2026-06-29-t4/script_verified.txt"
+}

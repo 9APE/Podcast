@@ -1,0 +1,13 @@
+{
+  "episode_id": "news_daily-2026-06-29-t5",
+  "stage": "fact_checked",
+  "topic": {
+    "title": "**Elon Musk Releases BANNED Movie on X After Europe Shutdown**",
+    "url": "",
+    "summary": "",
+    "search_query": "**Elon Musk Releases BANNED Movie on X After Europe Shutdown**"
+  },
+  "research_path": "episodes/news_daily-2026-06-29-t5/research.json",
+  "script_path": "episodes/news_daily-2026-06-29-t5/script.txt",
+  "verified_script_path": "episodes/news_daily-2026-06-29-t5/script_verified.txt"
+}

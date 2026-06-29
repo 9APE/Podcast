@@ -1,0 +1,13 @@
+{
+  "episode_id": "news_daily-2026-06-29-t1",
+  "stage": "fact_checked",
+  "topic": {
+    "title": "**Argentina DEFEATS Jordan in SHOCKING FIFA World Cup Final**",
+    "url": "",
+    "summary": "",
+    "search_query": "**Argentina DEFEATS Jordan in SHOCKING FIFA World Cup Final**"
+  },
+  "research_path": "episodes/news_daily-2026-06-29-t1/research.json",
+  "script_path": "episodes/news_daily-2026-06-29-t1/script.txt",
+  "verified_script_path": "episodes/news_daily-2026-06-29-t1/script_verified.txt"
+}

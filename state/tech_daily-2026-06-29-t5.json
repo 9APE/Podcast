@@ -1,0 +1,14 @@
+{
+  "episode_id": "tech_daily-2026-06-29-t5",
+  "stage": "fact_checked",
+  "topic": {
+    "title": "Physicists create a strange new quantum state called a fractional fermi sea | ScienceDaily",
+    "url": "http://www.sciencedaily.com/releases/2026/06/260619101330.htm",
+    "summary": "Physicists create a strange new quantum state called a fractional fermi sea | ScienceDaily\n\nScience News\n\nfrom research organizations\n\n---\n\nDate: June 29, 2026 Source: University of Innsbruck Summary: Researchers have shown that ultracold atoms can be driven into a strange new quantum state called a fractional Fermi sea, where particles organize themselves in unexpected ways. The discovery points ",
+    "published_date": "2026-06-01T00:00:00.000Z",
+    "age_hours": "< 24h"
+  },
+  "research_path": "episodes/tech_daily-2026-06-29-t5/research.json",
+  "script_path": "episodes/tech_daily-2026-06-29-t5/script.txt",
+  "verified_script_path": "episodes/tech_daily-2026-06-29-t5/script_verified.txt"
+}
